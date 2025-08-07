@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class TransactionHistory : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-A444F8V\\SQLEXPRESS;Database=QuanLiNhaThuoc;Integrated Security=True;";
+        public TransactionHistory()
+        {
+            InitializeComponent();
+            LoadTransactionData();
+        }
+
+        private void LoadTransactionData()
+        {
+            string query = @"
+                SELECT pn.MaPhieuNhap, pn.NgayNhap, ctpn.SoLuongNhap, t.TenThuoc, ncc.TenNCC
+                FROM PhieuNhap pn
+                JOIN ChiTietPhieuNhap ctpn ON pn.MaPhieuNhap = ctpn.MaPhieuNhap
+                JOIN Thuoc t ON ctpn.MaThuoc = t.MaThuoc
+                JOIN NhaCungCap ncc ON pn.MaNCC = ncc.MaNCC
+            ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvGiaodich.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi tải dữ liệu giao dịch: " + ex.Message);
+                }
+            }
+        }
+    }
+}

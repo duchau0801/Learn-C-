@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class LichSuBanThuoc : UserControl
+    {
+        private string invoiceFolder;
+        private DataTable salesTable;
+
+        public LichSuBanThuoc()
+        {
+            InitializeComponent();
+            invoiceFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "Invoices"
+            );
+            InitializeSalesTable();
+            SetupDataGridView();
+            LoadSalesHistory();
+        }
+
+        private void InitializeSalesTable()
+        {
+            salesTable = new DataTable();
+            salesTable.Columns.Add("InvoiceID", typeof(string));
+            salesTable.Columns.Add("Date", typeof(DateTime));
+            salesTable.Columns.Add("TotalAmount", typeof(decimal));
+            salesTable.Columns.Add("CustomerName", typeof(string));
+        }
+
+        private void SetupDataGridView()
+        {
+            dgvSalesHistory.DataSource = salesTable;
+            dgvSalesHistory.AutoGenerateColumns = false;
+            dgvSalesHistory.Columns.Clear();
+
+            dgvSalesHistory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "InvoiceID",
+                HeaderText = "Invoice ID",
+                Width = 200
+            });
+            dgvSalesHistory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Date",
+                HeaderText = "Date/Time",
+                Width = 180,
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "dd/MM/yyyy HH:mm:ss" }
+            });
+            dgvSalesHistory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "TotalAmount",
+                HeaderText = "Total Amount",
+                Width = 120,
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "N0" }
+            });
+            dgvSalesHistory.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "CustomerName",
+                HeaderText = "Customer Name",
+                Width = 150
+            });
+
+            var btnCol = new DataGridViewButtonColumn
+            {
+                HeaderText = "View Invoice",
+                Text = "View",
+                UseColumnTextForButtonValue = true,
+                Width = 100
+            };
+            dgvSalesHistory.Columns.Add(btnCol);
+
+            dgvSalesHistory.CellClick += dgvSalesHistory_CellClick;
+        }
+
+        private void LoadSalesHistory()
+        {
+            salesTable.Rows.Clear();
+            if (!Directory.Exists(invoiceFolder))
+                return;
+
+            var files = Directory.GetFiles(invoiceFolder, "Invoice_*.pdf");
+            foreach (var file in files)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                // Example: Invoice_20250802_153012.pdf
+                var parts = fileName.Split('_');
+                if (parts.Length < 3) continue;
+
+                string invoiceId = fileName;
+                DateTime date = ParseDateFromFileName(parts[1], parts[2]);
+                decimal totalAmount = 0; // Optional: implement PDF parsing for total
+                string customerName = ""; // Optional: implement if you store customer name
+
+                salesTable.Rows.Add(invoiceId, date, totalAmount, customerName);
+            }
+        }
+
+        private DateTime ParseDateFromFileName(string datePart, string timePart)
+        {
+            // datePart: yyyyMMdd, timePart: HHmmss
+            if (DateTime.TryParseExact(
+                datePart + timePart,
+                "yyyyMMddHHmmss",
+                null,
+                System.Globalization.DateTimeStyles.None,
+                out DateTime dt))
+            {
+                return dt;
+            }
+            return DateTime.MinValue;
+        }
+
+        private void dgvSalesHistory_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != dgvSalesHistory.Columns.Count - 1)
+                return;
+
+            var invoiceId = dgvSalesHistory.Rows[e.RowIndex].Cells[0].Value?.ToString();
+            if (string.IsNullOrEmpty(invoiceId)) return;
+
+            string pdfPath = Path.Combine(invoiceFolder, invoiceId + ".pdf");
+            if (File.Exists(pdfPath))
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(pdfPath) { UseShellExecute = true });
+            }
+            else
+            {
+                MessageBox.Show("Invoice not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        // Optional: Date filter
+        public void FilterByDate(DateTime? from, DateTime? to)
+        {
+            var rows = salesTable.AsEnumerable();
+            if (from.HasValue)
+                rows = rows.Where(r => r.Field<DateTime>("Date") >= from.Value);
+            if (to.HasValue)
+                rows = rows.Where(r => r.Field<DateTime>("Date") <= to.Value);
+
+            dgvSalesHistory.DataSource = rows.Any() ? rows.CopyToDataTable() : salesTable.Clone();
+        }
+    }
+}

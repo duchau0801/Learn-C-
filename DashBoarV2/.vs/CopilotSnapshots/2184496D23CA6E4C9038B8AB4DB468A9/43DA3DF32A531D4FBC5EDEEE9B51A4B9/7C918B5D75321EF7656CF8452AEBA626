@@ -1,0 +1,185 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+
+namespace DashBoarV2
+{
+    public partial class Form1 : DevExpress.XtraEditors.XtraForm
+    {
+        public Form1()
+        {
+            InitializeComponent();
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            UIHelper.MakeRoundedPanel(pnIn4, 20);
+            Timer.Start();
+            UIHelper.MakeRoundedPanel(pnlCustomer, 20);
+            UIHelper.MakeRoundedPanel(pnlMedicine, 20);
+            // UIHelper.MakeRoundedPanel(pnlRevenue, 20);
+            //UIHelper.MakeRoundedPanel(pnTask, 20);
+            this.Controls.Add(this.pnHeader); // dock top
+            this.Controls.Add(this.flowLayoutPanel1);
+            panelSubMenuMedicine.Visible = false;
+        }
+
+        private void pnSideBar_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        public static class UIHelper
+        {
+            public static void MakeRoundedPanel(Panel panel, int radius)
+            {
+                GraphicsPath path = new GraphicsPath();
+                path.StartFigure();
+                path.AddArc(new Rectangle(0, 0, radius, radius), 180, 90);
+                path.AddArc(new Rectangle(panel.Width - radius, 0, radius, radius), 270, 90);
+                path.AddArc(new Rectangle(panel.Width - radius, panel.Height - radius, radius, radius), 0, 90);
+                path.AddArc(new Rectangle(0, panel.Height - radius, radius, radius), 90, 90);
+                path.CloseFigure();
+                panel.Region = new Region(path);
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            lblTime.Text = DateTime.Now.ToString("HH:mm:ss");
+            lblDate.Text = DateTime.Now.ToString("dddd, dd/MM/yyyy");
+        }
+
+        private void lblDate_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTime_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void pnSideBar_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void pnlDashBoard_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private bool isSaleExpanded = false;
+        private void btnSale_Click_1(object sender, EventArgs e)
+        {
+            isSaleExpanded = !isSaleExpanded;
+            panelSubMenuSale.Visible = isSaleExpanded;
+            int submenuHeight = panelSubMenuSale.Height;
+
+            if (isSaleExpanded)
+            {
+                pnlAccount.Top += submenuHeight;
+                pnlCustomer.Top += submenuHeight;
+            }
+            else
+            {
+                pnlAccount.Top -= submenuHeight;
+                pnlCustomer.Top -= submenuHeight;
+            }
+        }
+        private bool isKhoExpanded = false;
+        private void btnMedicine_Click_1(object sender, EventArgs e)
+        {
+            isKhoExpanded = !isKhoExpanded;
+
+            panelSubMenuMedicine.Visible = isKhoExpanded;
+
+            int submenuHeight = panelSubMenuMedicine.Height;
+
+            if (isKhoExpanded)
+            {
+                pnlSale.Top += submenuHeight;
+                pnlAccount.Top += submenuHeight;
+                pnlCustomer.Top += submenuHeight;
+            }
+            else
+            {
+                pnlSale.Top -= submenuHeight;
+                pnlAccount.Top -= submenuHeight;
+                pnlCustomer.Top -= submenuHeight;
+            }
+            pnlmain.Controls.Clear(); // Xóa giao diện cũ
+            DashBoarV2.USER.MedicineNote vm = new DashBoarV2.USER.MedicineNote();
+            vm.Dock = DockStyle.Fill; // Hiển thị vừa panel
+            pnlmain.Controls.Add(vm);
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void btnAddmedicine_Click(object sender, EventArgs e)
+        {
+            pnlmain.Controls.Clear(); // Xóa giao diện cũ
+            DashBoarV2.USER.addmedicine vm = new DashBoarV2.USER.addmedicine();
+            vm.Dock = DockStyle.Fill; // Hiển thị vừa panel
+            vm.btnCapNhat.Visible = false; // Ẩn nút cập nhật khi ở chế độ thêm mới
+            pnlmain.Controls.Add(vm); // Thêm vào panel
+        }
+
+        private void pnlMedicine_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            pnlmain.Controls.Clear(); // Xóa giao diện cũ
+            DashBoarV2.USER.viewmedicine vm = new DashBoarV2.USER.viewmedicine();
+            vm.Dock = DockStyle.Fill; // Hiển thị vừa panel
+            pnlmain.Controls.Add(vm); // Thêm vào p
+        }
+
+        private void btnDashBoard_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPhieuNhap_Click(object sender, EventArgs e)
+        {
+            pnlmain.Controls.Clear(); // Xóa giao diện cũ
+            DashBoarV2.USER.TransactionHistory vm = new DashBoarV2.USER.TransactionHistory();
+            vm.Dock = DockStyle.Fill; // Hiển thị vừa panel
+            pnlmain.Controls.Add(vm); // Thêm vào p
+        }
+
+        private void btnSellMedicine_Click(object sender, EventArgs e)
+        {
+            pnlmain.Controls.Clear();
+            DashBoarV2.USER.sellmedicine vm = new DashBoarV2.USER.sellmedicine();
+            vm.Dock = DockStyle.Fill;
+            pnlmain.Controls.Add(vm);
+        }
+    }
+}

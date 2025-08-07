@@ -1,0 +1,128 @@
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace DashBoarV2.USER
+{
+    public partial class LichSuBanThuoc : UserControl
+    {
+        private DataTable salesTable;
+        private string invoiceFolder = Path.Combine(Application.StartupPath, "Invoices"); // Folder for invoices
+
+        public LichSuBanThuoc()
+        {
+            InitializeComponent();
+            btnCapNhat.Click += btnCapNhat_Click;
+        }
+
+        private void LichSuBanThuoc_Load(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+
+        private void LoadSalesHistory()
+        {
+            salesTable = new DataTable();
+            salesTable.Columns.Add("InvoiceID");
+            salesTable.Columns.Add("DateTime", typeof(string));
+            salesTable.Columns.Add("TotalAmount", typeof(decimal));
+            salesTable.Columns.Add("CustomerName");
+            salesTable.Columns.Add("FilePath");
+            salesTable.Columns.Add("ViewInvoice");
+
+            if (!Directory.Exists(invoiceFolder))
+                Directory.CreateDirectory(invoiceFolder);
+
+            foreach (var file in Directory.GetFiles(invoiceFolder, "*.pdf"))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                // Try to extract metadata from filename: Invoice_yyyyMMdd_HHmmss.pdf
+                string invoiceId = name;
+                string customer = "";
+                decimal total = 0;
+                string dateTimeStr = File.GetCreationTime(file).ToString("dd/MM/yyyy HH:mm:ss");
+                // If filename contains date/time, extract it
+                var match = Regex.Match(name, @"Invoice_(?<date>\d{8})_(?<time>\d{6})");
+                if (match.Success)
+                {
+                    string dateStr = match.Groups["date"].Value + match.Groups["time"].Value;
+                    if (DateTime.TryParseExact(dateStr, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out DateTime dt))
+                        dateTimeStr = dt.ToString("dd/MM/yyyy HH:mm:ss");
+                }
+                salesTable.Rows.Add(invoiceId, dateTimeStr, total, customer, file, "View");
+            }
+            dgvSalesHistory.DataSource = salesTable;
+            if (dgvSalesHistory.Columns.Contains("FilePath"))
+                dgvSalesHistory.Columns["FilePath"].Visible = false;
+            dgvSalesHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            // Add button column for 'View Invoice' if not present
+            if (!dgvSalesHistory.Columns.Contains("ViewInvoice"))
+            {
+                var btnCol = new DataGridViewButtonColumn();
+                btnCol.Name = "ViewInvoice";
+                btnCol.HeaderText = "View Invoice";
+                btnCol.Text = "View";
+                btnCol.UseColumnTextForButtonValue = true;
+                dgvSalesHistory.Columns.Add(btnCol);
+            }
+            dgvSalesHistory.CellContentClick -= dgvSalesHistory_CellContentClick;
+            dgvSalesHistory.CellContentClick += dgvSalesHistory_CellContentClick;
+        }
+
+        private void dgvSalesHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvSalesHistory.Columns[e.ColumnIndex].Name == "ViewInvoice")
+            {
+                var filePath = dgvSalesHistory.Rows[e.RowIndex].Cells["FilePath"].Value?.ToString();
+                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hóa đơn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnLoc_Click(object sender, EventArgs e)
+        {
+            if (salesTable == null) return;
+            DateTime selectedDate = dateTimePicker1.Value.Date;
+            DataView dv = new DataView(salesTable);
+            dv.RowFilter = $"Convert(Date, 'System.String') LIKE '{selectedDate:dd/MM/yyyy}%'";
+
+            // Refresh the DataGridView
+            dgvSalesHistory.DataSource = dv;
+        }
+
+        private void btnXemChiTiet_Click(object sender, EventArgs e)
+        {
+            if (dgvSalesHistory.SelectedRows.Count > 0)
+            {
+                var row = dgvSalesHistory.SelectedRows[0];
+                string filePath = row.Cells["FilePath"].Value?.ToString();
+                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hóa đơn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một hóa đơn để xem chi tiết.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnCapNhat_Click(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+    }
+}

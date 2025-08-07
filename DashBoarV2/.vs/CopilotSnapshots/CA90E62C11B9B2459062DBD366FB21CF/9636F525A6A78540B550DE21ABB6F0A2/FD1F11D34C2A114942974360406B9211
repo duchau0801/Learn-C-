@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class viewmedicine : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-A444F8V\\SQLEXPRESS;Database=QuanLiNhaThuoc;Integrated Security=True;"; // Sửa lại thông tin kết nối phù hợp
+
+        public viewmedicine()
+        {
+            InitializeComponent();
+        }
+
+        private void LoadThuocData()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT MaThuoc, TenThuoc, LoaiThuoc, DonViTinh, GiaMua, GiaBan, SoLuongTon FROM Thuoc";
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvViewthuoc.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void viewmedicine_Load(object sender, EventArgs e)
+        {
+            LoadThuocData();
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+    }
+}

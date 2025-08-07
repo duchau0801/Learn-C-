@@ -1,0 +1,84 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace DashBoarV2.USER
+{
+    public partial class addmedicine : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-A444F8V\\SQLEXPRESS;Database=QuanLiNhaThuoc;Integrated Security=True;"; // Sửa lại thông tin kết nối phù hợp
+
+        private void LoadLoaiThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT LoaiThuoc FROM Thuoc WHERE LoaiThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbLoaiThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbLoaiThuoc.Items.Add(reader["LoaiThuoc"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbLoaiThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbLoaiThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadDonViThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT DonViTinh FROM Thuoc WHERE DonViTinh IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbDonViThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbDonViThuoc.Items.Add(reader["DonViTinh"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbDonViThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbDonViThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void addmedicine_Load(object sender, EventArgs e)
+        {
+            LoadLoaiThuoc();
+            LoadDonViThuoc();
+        }
+
+        public addmedicine()
+        {
+            InitializeComponent();
+            this.Load += addmedicine_Load;
+        }
+    }
+}

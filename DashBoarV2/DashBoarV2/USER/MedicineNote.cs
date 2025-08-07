@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class MedicineNote : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-QEUV6JR;Database=QuanLiNhaThuoc;Integrated Security=True;";
+        public MedicineNote()
+        {
+            InitializeComponent();
+            LoadThuocHetHan();
+        }
+
+        private void lblSign_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadThuocHetHan()
+        {
+            string query = @"
+                SELECT t.TenThuoc, ctpn.HanSuDung
+                FROM Thuoc t
+                JOIN ChiTietPhieuNhap ctpn ON t.MaThuoc = ctpn.MaThuoc
+                WHERE ctpn.HanSuDung IS NOT NULL
+            ";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    // Tạo bảng kết quả với số ngày còn lại
+                    DataTable result = new DataTable();
+                    result.Columns.Add("TenThuoc", typeof(string));
+                    result.Columns.Add("HanSuDung", typeof(DateTime));
+                    result.Columns.Add("SoNgayConLai", typeof(int));
+                    int count = 0;
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (DateTime.TryParse(row["HanSuDung"].ToString(), out DateTime hanSuDung))
+                        {
+                            int daysLeft = (hanSuDung - DateTime.Now).Days;
+                            if (daysLeft >= 0 && daysLeft <= 30)
+                            {
+                                result.Rows.Add(row["TenThuoc"].ToString(), hanSuDung, daysLeft);
+                                count++;
+                            }
+                        }
+                    }
+                    dgvThuocHetHan.DataSource = result;
+                    dgvThuocHetHan.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    lblinfo.Text = $"Bạn đang có {count} \n thuốc sắp hết hạn";
+                    // Tự động điều chỉnh chiều cao DataGridView
+                    int rowHeight = dgvThuocHetHan.RowTemplate.Height;
+                    int headerHeight = dgvThuocHetHan.ColumnHeadersHeight;
+                    int border = 2; // padding
+                    int minHeight = 60 + headerHeight; // chiều cao tối thiểu
+                    int totalHeight = headerHeight + (rowHeight * result.Rows.Count) + border;
+                    dgvThuocHetHan.Height = Math.Max(minHeight, totalHeight);
+                }
+                catch (Exception ex)
+                {
+                    lblinfo.Text = "Không thể lấy dữ liệu thuốc hết hạn.";
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,253 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class viewmedicine : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-QEUV6JR;Database=QuanLiNhaThuoc;Integrated Security=True;"; // Sửa lại thông tin kết nối phù hợp
+
+        public viewmedicine()
+        {
+            InitializeComponent();
+
+        }
+
+        public void LoadThuocData()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                        SELECT t.MaThuoc, t.TenThuoc, t.LoaiThuoc, t.DonViTinh, t.GiaMua, t.GiaBan, t.SoLuongTon, ctpn.HanSuDung
+                        FROM Thuoc t
+                        LEFT JOIN ChiTietPhieuNhap ctpn ON t.MaThuoc = ctpn.MaThuoc
+                    ";
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    // Xóa các dòng rỗng (không có MaThuoc hoặc TenThuoc)
+                    for (int i = dt.Rows.Count - 1; i >= 0; i--)
+                    {
+                        var row = dt.Rows[i];
+                        if (string.IsNullOrWhiteSpace(row["MaThuoc"].ToString()) && string.IsNullOrWhiteSpace(row["TenThuoc"].ToString()))
+                        {
+                            dt.Rows.RemoveAt(i);
+                        }
+                    }
+                    dgvViewthuoc.DataSource = dt;
+                    dgvViewthuoc.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+        public void SetupAutoCompleteForSearch()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT TenThuoc FROM Thuoc WHERE TenThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    AutoCompleteStringCollection collection = new AutoCompleteStringCollection();
+                    while (reader.Read())
+                    {
+                        collection.Add(reader["TenThuoc"].ToString());
+                    }
+                    reader.Close();
+                    TxtSearch.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    TxtSearch.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    TxtSearch.AutoCompleteCustomSource = collection;
+                }
+                catch (Exception ex)
+                {
+                    // Không cần báo lỗi khi autocomplete
+                }
+            }
+        }
+
+        private void TxtSearch_TextChanged(object sender, EventArgs e)
+        {
+            string searchText = TxtSearch.Text.Trim();
+            if (string.IsNullOrEmpty(searchText))
+            {
+                LoadThuocData();
+                return;
+            }
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"SELECT t.MaThuoc, t.TenThuoc, t.LoaiThuoc, t.DonViTinh, t.GiaMua, t.GiaBan, t.SoLuongTon, ctpn.HanSuDung
+                        FROM Thuoc t
+                        LEFT JOIN ChiTietPhieuNhap ctpn ON t.MaThuoc = ctpn.MaThuoc
+                        WHERE t.TenThuoc LIKE @TenThuoc";
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    adapter.SelectCommand.Parameters.AddWithValue("@TenThuoc", "%" + searchText + "%");
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvViewthuoc.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    // Không cần báo lỗi khi tìm kiếm
+                }
+            }
+        }
+
+        private void dgvViewthuoc_SelectionChanged(object sender, EventArgs e)
+        {
+            // Enable buttons only if a row is selected
+            bool hasSelection = dgvViewthuoc.SelectedRows.Count > 0;
+            btnXoa.Enabled = hasSelection;
+            btnEdit.Enabled = hasSelection;
+            btnXoa.BackColor = hasSelection ? Color.Red : Color.LightGray;
+            btnEdit.BackColor = hasSelection ? Color.Orange : Color.LightGray;
+        }
+
+        private void viewmedicine_Load(object sender, EventArgs e)
+        {
+            LoadThuocData();
+            SetupAutoCompleteForSearch();
+            btnXoa.Enabled = false;
+            btnEdit.Enabled = false;
+            btnXoa.BackColor = Color.LightGray;
+            btnEdit.BackColor = Color.LightGray;
+            dgvViewthuoc.SelectionChanged += dgvViewthuoc_SelectionChanged;
+            TxtSearch.TextChanged += TxtSearch_TextChanged;
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (dgvViewthuoc.SelectedRows.Count > 0)
+            {
+                var selectedRow = dgvViewthuoc.SelectedRows[0];
+                string maThuoc = selectedRow.Cells["MaThuoc"].Value?.ToString();
+
+                Form parentForm = this.FindForm();
+                if (parentForm != null)
+                {
+                    var pnlmain = parentForm.Controls.Find("pnlmain", true).FirstOrDefault();
+                    if (pnlmain != null)
+                    {
+                        pnlmain.Controls.Clear();
+                        var addMed = new addmedicine();
+                        addMed.Dock = DockStyle.Fill;
+                        pnlmain.Controls.Add(addMed);
+
+                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        {
+                            conn.Open();
+                            string query = @"
+                        SELECT t.MaThuoc, t.TenThuoc, t.LoaiThuoc, t.DonViTinh, t.GiaMua, t.GiaBan, t.SoLuongTon, ctpn.HanSuDung, pn.NgayNhap, ncc.TenNCC
+                        FROM Thuoc t
+                        LEFT JOIN ChiTietPhieuNhap ctpn ON t.MaThuoc = ctpn.MaThuoc
+                        LEFT JOIN PhieuNhap pn ON ctpn.MaPhieuNhap = pn.MaPhieuNhap
+                        LEFT JOIN NhaCungCap ncc ON pn.MaNCC = ncc.MaNCC
+                        WHERE t.MaThuoc = @MaThuoc";
+                            SqlCommand cmd = new SqlCommand(query, conn);
+                            cmd.Parameters.AddWithValue("@MaThuoc", maThuoc);
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            if (reader.Read())
+                            {
+                                addMed.TxtMaThuoc.Text = reader["MaThuoc"].ToString();
+                                addMed.TxtTenThuoc.Text = reader["TenThuoc"].ToString();
+                                addMed.cmbLoaiThuoc.Text = reader["LoaiThuoc"].ToString();
+                                addMed.cmbDonViThuoc.Text = reader["DonViTinh"].ToString();
+                                addMed.TxtGiaVon.Text = reader["GiaMua"].ToString();
+                                addMed.TxtGiaBan.Text = reader["GiaBan"].ToString();
+                                addMed.TxtSoluong.Text = reader["SoLuongTon"].ToString();
+                                if (DateTime.TryParse(reader["HanSuDung"].ToString(), out DateTime hsd))
+                                    addMed.dateTimePicker1.Value = hsd;
+                                if (reader["NgayNhap"] != DBNull.Value && DateTime.TryParse(reader["NgayNhap"].ToString(), out DateTime ngayNhap))
+                                    addMed.dateNSX.Value = ngayNhap;
+                                addMed.textBox1.Text = reader["TenNCC"].ToString();
+                            }
+                            reader.Close();
+                        }
+                        addMed.ShowUpdateMode();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một dòng để sửa.");
+            }
+        }
+
+        private void btnXoa_Click_1(object sender, EventArgs e)
+        {
+            if (dgvViewthuoc.SelectedRows.Count > 0)
+            {
+                var selectedRow = dgvViewthuoc.SelectedRows[0];
+                var maThuoc = selectedRow.Cells["MaThuoc"].Value?.ToString();
+
+                if (!string.IsNullOrEmpty(maThuoc))
+                {
+                    var confirm = MessageBox.Show("Bạn có chắc muốn xóa thuốc này?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (confirm == DialogResult.Yes)
+                    {
+                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        {
+                            try
+                            {
+                                conn.Open();
+
+                                // Delete related records in ChiTietPhieuNhap first
+                                string deleteDetails = "DELETE FROM ChiTietPhieuNhap WHERE MaThuoc = @MaThuoc";
+                                using (SqlCommand cmdDetails = new SqlCommand(deleteDetails, conn))
+                                {
+                                    cmdDetails.Parameters.AddWithValue("@MaThuoc", maThuoc);
+                                    cmdDetails.ExecuteNonQuery();
+                                }
+
+                                // Now delete from Thuoc
+                                string deleteThuoc = "DELETE FROM Thuoc WHERE MaThuoc = @MaThuoc";
+                                using (SqlCommand cmdThuoc = new SqlCommand(deleteThuoc, conn))
+                                {
+                                    cmdThuoc.Parameters.AddWithValue("@MaThuoc", maThuoc);
+                                    cmdThuoc.ExecuteNonQuery();
+                                }
+
+                                MessageBox.Show("Xóa thuốc thành công!");
+                                LoadThuocData();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("Lỗi khi xóa: " + ex.Message);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một dòng để xóa.");
+            }
+        }
+    
+    }
+}

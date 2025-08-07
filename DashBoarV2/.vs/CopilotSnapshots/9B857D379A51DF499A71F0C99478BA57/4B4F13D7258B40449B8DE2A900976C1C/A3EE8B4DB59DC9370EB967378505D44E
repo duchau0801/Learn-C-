@@ -1,0 +1,346 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using DevExpress.XtraCharts;
+
+namespace DashBoarV2.USER
+{
+    public partial class addmedicine : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-A444F8V\\SQLEXPRESS;Database=QuanLiNhaThuoc;Integrated Security=True;"; // Sửa lại thông tin kết nối phù hợp
+
+        private void LoadLoaiThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT LoaiThuoc FROM Thuoc WHERE LoaiThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbLoaiThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbLoaiThuoc.Items.Add(reader["LoaiThuoc"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbLoaiThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbLoaiThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadDonViThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT DonViTinh FROM Thuoc WHERE DonViTinh IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbDonViThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbDonViThuoc.Items.Add(reader["DonViTinh"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbDonViThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbDonViThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadTenThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT TenThuoc FROM Thuoc WHERE TenThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    AutoCompleteStringCollection tenThuocCollection = new AutoCompleteStringCollection();
+                    while (reader.Read())
+                    {
+                        tenThuocCollection.Add(reader["TenThuoc"].ToString());
+                    }
+                    reader.Close();
+                    TxtTenThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    TxtTenThuoc.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    TxtTenThuoc.AutoCompleteCustomSource = tenThuocCollection;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadNhaCungCap()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT TenNCC FROM NhaCungCap WHERE TenNCC IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    AutoCompleteStringCollection nccCollection = new AutoCompleteStringCollection();
+                    while (reader.Read())
+                    {
+                        nccCollection.Add(reader["TenNCC"].ToString());
+                    }
+                    reader.Close();
+                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    textBox1.AutoCompleteCustomSource = nccCollection;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        public void UpdateChartLoaiThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                        SELECT t.LoaiThuoc, COUNT(*) AS SoLanNhap
+                        FROM ChiTietPhieuNhap ctpn
+                        JOIN Thuoc t ON ctpn.MaThuoc = t.MaThuoc
+                        GROUP BY t.LoaiThuoc
+                    ";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    chartThuoc.Series.Clear();
+                    Series series = new Series("Số lần nhập", ViewType.Bar);
+
+                    while (reader.Read())
+                    {
+                        string loaiThuoc = reader["LoaiThuoc"].ToString();
+                        int soLanNhap = Convert.ToInt32(reader["SoLanNhap"]);
+                        series.Points.Add(new SeriesPoint(loaiThuoc, soLanNhap));
+                    }
+                    chartThuoc.Series.Add(series);
+
+                    if (chartThuoc.Diagram is XYDiagram diagram)
+                    {
+                        diagram.AxisX.Title.Text = "Loại thuốc";
+                        diagram.AxisY.Title.Text = "Số lần nhập";
+                        diagram.AxisX.Title.Visibility = DevExpress.Utils.DefaultBoolean.True;
+                        diagram.AxisY.Title.Visibility = DevExpress.Utils.DefaultBoolean.True;
+                    }
+
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi cập nhật biểu đồ: " + ex.Message);
+                }
+            }
+        }
+
+        private void addmedicine_Load(object sender, EventArgs e)
+        {
+            LoadLoaiThuoc();
+            LoadDonViThuoc();
+            LoadTenThuoc();
+            LoadNhaCungCap();
+            UpdateChartLoaiThuoc(); // cập nhật biểu đồ khi load
+        }
+
+        private void TxtTenThuoc_TextChanged(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT MaThuoc, LoaiThuoc FROM Thuoc WHERE TenThuoc = @TenThuoc";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@TenThuoc", TxtTenThuoc.Text.Trim());
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        TxtMaThuoc.Text = reader["MaThuoc"].ToString();
+                        cmbLoaiThuoc.Text = reader["LoaiThuoc"].ToString();
+                    }
+                    else
+                    {
+                        TxtMaThuoc.Text = "";
+                        cmbLoaiThuoc.Text = "";
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex)
+                {
+                    // Không cần báo lỗi liên tục khi người dùng nhập
+                }
+            }
+        }
+
+        public addmedicine()
+        {
+            InitializeComponent();
+            this.Load += addmedicine_Load;
+            this.TxtTenThuoc.TextChanged += TxtTenThuoc_TextChanged;
+        }
+        public string TenThuoc
+        {
+            get { return TxtTenThuoc.Text; }
+            set { TxtTenThuoc.Text = value; }
+        }
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnThem_Click_1(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    // Kiểm tra tên thuốc đã tồn tại chưa
+                    string checkQuery = "SELECT SoLuongTon FROM Thuoc WHERE TenThuoc = @TenThuoc";
+                    SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
+                    checkCmd.Parameters.AddWithValue("@TenThuoc", TxtTenThuoc.Text.Trim());
+                    object exist = checkCmd.ExecuteScalar();
+
+                    if (exist != null)
+                    {
+                        // Nếu tồn tại, cập nhật thông tin và cộng số lượng nhập vào tồn kho
+                        int soLuongTonCu = Convert.ToInt32(exist);
+                        int soLuongNhap = int.TryParse(TxtSoluong.Text.Trim(), out int sl) ? sl : 0;
+                        int soLuongTonMoi = soLuongTonCu + soLuongNhap;
+
+                        string updateQuery = @"
+                            UPDATE Thuoc SET
+                                MaThuoc = @MaThuoc,
+                                LoaiThuoc = @LoaiThuoc,
+                                DonViTinh = @DonViTinh,
+                                GiaMua = @GiaMua,
+                                GiaBan = @GiaBan,
+                                SoLuongTon = @SoLuongTon
+                            WHERE TenThuoc = @TenThuoc;
+                        ";
+                        SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
+                        updateCmd.Parameters.AddWithValue("@MaThuoc", TxtMaThuoc.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@LoaiThuoc", cmbLoaiThuoc.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@DonViTinh", cmbDonViThuoc.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@GiaMua", decimal.TryParse(TxtGiaVon.Text.Trim(), out decimal gm) ? gm : 0);
+                        updateCmd.Parameters.AddWithValue("@GiaBan", decimal.TryParse(TxtGiaBan.Text.Trim(), out decimal gb) ? gb : 0);
+                        updateCmd.Parameters.AddWithValue("@SoLuongTon", soLuongTonMoi);
+                        updateCmd.Parameters.AddWithValue("@TenThuoc", TxtTenThuoc.Text.Trim());
+                        updateCmd.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        // Nếu chưa tồn tại, thêm mới thuốc
+                        string insertQuery = @"
+                            INSERT INTO Thuoc (MaThuoc, TenThuoc, LoaiThuoc, DonViTinh, GiaMua, GiaBan, SoLuongTon)
+                            VALUES (@MaThuoc, @TenThuoc, @LoaiThuoc, @DonViTinh, @GiaMua, @GiaBan, @SoLuongTon);
+                        ";
+                        SqlCommand insertCmd = new SqlCommand(insertQuery, conn);
+                        insertCmd.Parameters.AddWithValue("@MaThuoc", TxtMaThuoc.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@TenThuoc", TxtTenThuoc.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@LoaiThuoc", cmbLoaiThuoc.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@DonViTinh", cmbDonViThuoc.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@GiaMua", decimal.TryParse(TxtGiaVon.Text.Trim(), out decimal gm) ? gm : 0);
+                        insertCmd.Parameters.AddWithValue("@GiaBan", decimal.TryParse(TxtGiaBan.Text.Trim(), out decimal gb) ? gb : 0);
+                        insertCmd.Parameters.AddWithValue("@SoLuongTon", int.TryParse(TxtSoluong.Text.Trim(), out int sl) ? sl : 0);
+                        insertCmd.ExecuteNonQuery();
+                    }
+
+                    // Thêm ngày hết hạn vào ChiTietPhieuNhap (nếu cần)
+                    string insertCTPN = @"
+                        INSERT INTO ChiTietPhieuNhap (MaPhieuNhap, MaThuoc, SoLuongNhap, HanSuDung)
+                        VALUES (@MaPhieuNhap, @MaThuoc, @SoLuongNhap, @HanSuDung);
+                    ";
+                    SqlCommand ctpnCmd = new SqlCommand(insertCTPN, conn);
+                    ctpnCmd.Parameters.AddWithValue("@MaPhieuNhap", 1); // hoặc lấy mã phiếu nhập phù hợp
+                    ctpnCmd.Parameters.AddWithValue("@MaThuoc", TxtMaThuoc.Text.Trim());
+                    ctpnCmd.Parameters.AddWithValue("@SoLuongNhap", int.TryParse(TxtSoluong.Text.Trim(), out int slNhap) ? slNhap : 0);
+                    ctpnCmd.Parameters.AddWithValue("@HanSuDung", dateTimePicker1.Value);
+                    ctpnCmd.ExecuteNonQuery();
+
+                    MessageBox.Show("Thêm/Cập nhật thuốc thành công!");
+
+                    // Hiển thị dữ liệu mới lên dgvViewthuoc nếu viewmedicine đang mở
+                    foreach (Control ctrl in this.Parent.Controls)
+                    {
+                        if (ctrl is viewmedicine vm)
+                        {
+                            vm.LoadThuocData();
+                        }
+                    }
+                    UpdateChartLoaiThuoc(); // cập nhật biểu đồ sau khi thêm thuốc
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi: " + ex.Message);
+                }
+            }
+        }
+
+        public void groudboxThongTin_Enter(object sender, EventArgs e)
+        {
+
+
+        }
+
+        public void groupBoxChiTiet_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TxtMaThuoc_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chartThuoc_Click(object sender, EventArgs e)
+        {
+
+        }
+        
+        private void addmedicine_Load_1(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

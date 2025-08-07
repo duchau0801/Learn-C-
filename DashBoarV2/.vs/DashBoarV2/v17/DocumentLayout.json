@@ -1,0 +1,131 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Learn-C-\\DashBoarV2\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|D:\\Learn-C-\\DashBoarV2\\dashboarv2\\user\\banthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\banthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|d:\\learn-c-\\dashboarv2\\dashboarv2\\user\\banthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\banthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|d:\\learn-c-\\dashboarv2\\dashboarv2\\user\\lichsubanthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\lichsubanthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|D:\\Learn-C-\\DashBoarV2\\dashboarv2\\user\\lichsubanthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\lichsubanthuoc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|D:\\Learn-C-\\DashBoarV2\\dashboarv2\\user\\transactionhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\transactionhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|d:\\learn-c-\\dashboarv2\\dashboarv2\\user\\transactionhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\transactionhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|d:\\learn-c-\\dashboarv2\\dashboarv2\\user\\addmedicine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DA21D3DE-D92B-4F17-B93A-59B5B823F93F}|DashBoarV2\\DashBoarV2.csproj|solutionrelative:dashboarv2\\user\\addmedicine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TransactionHistory.cs [Design]",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\TransactionHistory.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\TransactionHistory.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\TransactionHistory.cs [Design]",
+              "RelativeToolTip": "DashBoarV2\\USER\\TransactionHistory.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T05:57:43.023Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BanThuoc.cs [Design]",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\BanThuoc.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\BanThuoc.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\BanThuoc.cs [Design]",
+              "RelativeToolTip": "DashBoarV2\\USER\\BanThuoc.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T20:08:52.246Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BanThuoc.cs",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\BanThuoc.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\BanThuoc.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\BanThuoc.cs",
+              "RelativeToolTip": "DashBoarV2\\USER\\BanThuoc.cs",
+              "ViewState": "AgIAAHMAAAAAAAAAAAApwJMAAABlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-04T01:12:47.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LichSuBanThuoc.cs [Design]",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\LichSuBanThuoc.cs [Design]",
+              "RelativeToolTip": "DashBoarV2\\USER\\LichSuBanThuoc.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T05:35:44.804Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LichSuBanThuoc.cs",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "RelativeToolTip": "DashBoarV2\\USER\\LichSuBanThuoc.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAUwCkAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T06:02:28.756Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TransactionHistory.cs",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\TransactionHistory.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\TransactionHistory.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\TransactionHistory.cs",
+              "RelativeToolTip": "DashBoarV2\\USER\\TransactionHistory.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-04T01:19:24.38Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "addmedicine.cs",
+              "DocumentMoniker": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\addmedicine.cs",
+              "RelativeDocumentMoniker": "DashBoarV2\\USER\\addmedicine.cs",
+              "ToolTip": "D:\\Learn-C-\\DashBoarV2\\DashBoarV2\\USER\\addmedicine.cs",
+              "RelativeToolTip": "DashBoarV2\\USER\\addmedicine.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-04T01:16:35.124Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
