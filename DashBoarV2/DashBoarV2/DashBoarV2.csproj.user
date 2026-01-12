@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="USER\addmedicine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="USER\BanThuoc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="USER\LichSuBanThuoc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="USER\MedicineNote.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="USER\TransactionHistory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="USER\viewmedicine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

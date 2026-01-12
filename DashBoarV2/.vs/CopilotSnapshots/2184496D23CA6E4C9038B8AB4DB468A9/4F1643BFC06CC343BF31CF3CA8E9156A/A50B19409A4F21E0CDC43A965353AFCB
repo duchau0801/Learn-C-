@@ -1,0 +1,163 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace DashBoarV2.USER
+{
+    public partial class sellmedicine : UserControl
+    {
+        // Simulated medicine data
+        private List<Medicine> medicines = new List<Medicine>
+        {
+            new Medicine { Code = "M001", Name = "Paracetamol", UnitPrice = 5000 },
+            new Medicine { Code = "M002", Name = "Aspirin", UnitPrice = 7000 },
+            new Medicine { Code = "M003", Name = "Amoxicillin", UnitPrice = 12000 }
+        };
+
+        // Sale items
+        private List<SaleItem> saleItems = new List<SaleItem>();
+
+        public sellmedicine()
+        {
+            InitializeComponent();
+            LoadMedicineList("");
+            UpdateGrandTotal();
+        }
+
+        private void txtTimKiemThuoc_TextChanged(object sender, EventArgs e)
+        {
+            LoadMedicineList(txtTimKiemThuoc.Text.Trim());
+        }
+
+        private void LoadMedicineList(string search)
+        {
+            lvThongTinThuoc.Items.Clear();
+            var filtered = medicines.Where(m => m.Name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            foreach (var med in filtered)
+            {
+                var item = new ListViewItem(new[] { med.Code, med.Name, med.UnitPrice.ToString() });
+                lvThongTinThuoc.Items.Add(item);
+            }
+        }
+
+        private void lvThongTinThuoc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvThongTinThuoc.SelectedItems.Count > 0)
+            {
+                var item = lvThongTinThuoc.SelectedItems[0];
+                txtMaThuoc.Text = item.SubItems[0].Text;
+                txtTenThuoc.Text = item.SubItems[1].Text;
+                txtGiaMoiDonVi.Text = item.SubItems[2].Text;
+                TxtSoluong.Text = "1";
+                CalculateTotalPrice();
+            }
+        }
+
+        private void TxtSoluong_TextChanged(object sender, EventArgs e)
+        {
+            CalculateTotalPrice();
+        }
+
+        private void CalculateTotalPrice()
+        {
+            if (int.TryParse(TxtSoluong.Text, out int qty) && qty > 0 && decimal.TryParse(txtGiaMoiDonVi.Text, out decimal price))
+            {
+                txtTongGia.Text = (qty * price).ToString();
+            }
+            else
+            {
+                txtTongGia.Text = "";
+            }
+        }
+
+        private void btnThemHoaDon_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(TxtSoluong.Text, out int qty) || qty <= 0)
+            {
+                MessageBox.Show("Số lượng phải là số nguyên dương.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtMaThuoc.Text) || string.IsNullOrWhiteSpace(txtTenThuoc.Text) || string.IsNullOrWhiteSpace(txtGiaMoiDonVi.Text))
+            {
+                MessageBox.Show("Vui lòng chọn thuốc.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            decimal price = decimal.Parse(txtGiaMoiDonVi.Text);
+            decimal total = qty * price;
+            var saleItem = new SaleItem
+            {
+                MedicineCode = txtMaThuoc.Text,
+                MedicineName = txtTenThuoc.Text,
+                Quantity = qty,
+                UnitPrice = price,
+                TotalPrice = total
+            };
+            saleItems.Add(saleItem);
+            dgvThongTinHoaDon.Rows.Add(saleItem.MedicineCode, saleItem.MedicineName, saleItem.Quantity, saleItem.UnitPrice, saleItem.TotalPrice);
+            UpdateGrandTotal();
+            ClearForm();
+        }
+
+        private void btnXoaHoaDon_Click(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.SelectedRows.Count > 0)
+            {
+                int idx = dgvThongTinHoaDon.SelectedRows[0].Index;
+                if (idx >= 0 && idx < saleItems.Count)
+                {
+                    saleItems.RemoveAt(idx);
+                    dgvThongTinHoaDon.Rows.RemoveAt(idx);
+                    UpdateGrandTotal();
+                }
+            }
+        }
+
+        private void btnThanhToan_Click(object sender, EventArgs e)
+        {
+            decimal grandTotal = saleItems.Sum(x => x.TotalPrice);
+            MessageBox.Show($"Tổng tiền hóa đơn: {grandTotal:N0} VNĐ\nSố mặt hàng: {saleItems.Count}", "Hóa đơn bán thuốc", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            saleItems.Clear();
+            dgvThongTinHoaDon.Rows.Clear();
+            UpdateGrandTotal();
+        }
+
+        private void dgvThongTinHoaDon_SelectionChanged(object sender, EventArgs e)
+        {
+            btnXoaHoaDon.Enabled = dgvThongTinHoaDon.SelectedRows.Count > 0;
+        }
+
+        private void UpdateGrandTotal()
+        {
+            decimal grandTotal = saleItems.Sum(x => x.TotalPrice);
+            txtTongTienHoaDon.Text = $"Tổng giá tiền: {grandTotal:N0} VNĐ";
+        }
+
+        private void ClearForm()
+        {
+            txtMaThuoc.Text = "";
+            txtTenThuoc.Text = "";
+            txtGiaMoiDonVi.Text = "";
+            TxtSoluong.Text = "";
+            txtTongGia.Text = "";
+        }
+
+        // Medicine and SaleItem models
+        private class Medicine
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+            public decimal UnitPrice { get; set; }
+        }
+        private class SaleItem
+        {
+            public string MedicineCode { get; set; }
+            public string MedicineName { get; set; }
+            public int Quantity { get; set; }
+            public decimal UnitPrice { get; set; }
+            public decimal TotalPrice { get; set; }
+        }
+    }
+}

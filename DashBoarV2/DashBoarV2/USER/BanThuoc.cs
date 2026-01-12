@@ -1,0 +1,338 @@
+﻿using QuestPDF.Drawing;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using PdfSharp.Pdf;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
+using System.Text;
+using System.Data.SqlClient;
+
+namespace DashBoarV2.USER
+{
+    public partial class BanThuoc : UserControl
+    {
+        private int editingRowIndex = -1;
+
+        public BanThuoc()
+        {
+            InitializeComponent();
+            lstSuggestions.View = View.List;
+            lstSuggestions.FullRowSelect = true;
+            txtDonGia.ReadOnly = true;
+            txtMaThuoc.ReadOnly = true;
+            txtTenThuoc.ReadOnly = true;
+            txtDonViTinh.ReadOnly = true;
+            txtTongGia.ReadOnly = true;
+            txtTongTienHoaDon.ReadOnly = true;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+        }
+
+        // Search medicine by name or code from database
+        private void txtTimKiemThuoc_TextChanged_1(object sender, EventArgs e)
+        {
+            string query = txtTimKiemThuoc.Text.Trim();
+            lstSuggestions.Items.Clear();
+            if (string.IsNullOrEmpty(query)) return;
+            string connectionString = "Server=DESKTOP-QEUV6JR;Database=QuanLiNhaThuoc;Trusted_Connection=True;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = "SELECT MaThuoc, TenThuoc, DonViTinh, GiaBan FROM Thuoc WHERE LOWER(TenThuoc) LIKE @q OR LOWER(MaThuoc) LIKE @q";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@q", "%" + query.ToLower() + "%");
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var item = new ListViewItem($"{reader["TenThuoc"]} ({reader["MaThuoc"]})");
+                            item.Tag = new Medicine
+                            {
+                                MaThuoc = reader["MaThuoc"].ToString(),
+                                TenThuoc = reader["TenThuoc"].ToString(),
+                                DonViTinh = reader["DonViTinh"].ToString(),
+                                DonGia = reader["GiaBan"] != DBNull.Value ? Convert.ToDecimal(reader["GiaBan"]) : 0
+                            };
+                            lstSuggestions.Items.Add(item);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Select medicine from suggestions
+        private void lstSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSuggestions.SelectedItems.Count == 0) return;
+            var med = lstSuggestions.SelectedItems[0].Tag as Medicine;
+            if (med != null)
+            {
+                txtMaThuoc.Text = med.MaThuoc;
+                txtTenThuoc.Text = med.TenThuoc;
+                txtDonViTinh.Text = med.DonViTinh;
+                txtDonGia.Text = med.DonGia.ToString();
+                txtSoLuong.Text = "";
+                txtTongGia.Text = "";
+            }
+        }
+
+        // Recalculate total price when quantity changes
+        private void txtSoLuong_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtSoLuong.Text, out int qty) && decimal.TryParse(txtDonGia.Text, out decimal price))
+            {
+                txtTongGia.Text = (qty * price).ToString();
+            }
+            else
+            {
+                txtTongGia.Text = "";
+            }
+        }
+
+        // Add/Edit medicine to invoice
+        private void btnThemSuaHoaDon_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtMaThuoc.Text) || string.IsNullOrWhiteSpace(txtTenThuoc.Text) || string.IsNullOrWhiteSpace(txtDonViTinh.Text) || string.IsNullOrWhiteSpace(txtDonGia.Text) || string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtTongGia.Text))
+            {
+                MessageBox.Show($"Vui lòng nhập đầy đủ thông tin mặt hàng. ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
+            }
+            if (!int.TryParse(txtSoLuong.Text, out int qty) || !decimal.TryParse(txtDonGia.Text, out decimal price) || !decimal.TryParse(txtTongGia.Text, out decimal total))
+            {
+                MessageBox.Show($"Dữ liệu số lượng hoặc giá không hợp lệ.", "Lỗi dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            string tenKH = txtTenKH.Text;
+            string tenNV = txtTenNV.Text;
+            if (editingRowIndex >= 0)
+            {
+                // Update selected row
+                var row = dgvThongTinHoaDon.Rows[editingRowIndex];
+                row.Cells["Column1"].Value = txtMaThuoc.Text;
+                row.Cells["Column2"].Value = txtTenThuoc.Text;
+                row.Cells["Column4"].Value = txtDonViTinh.Text;
+                row.Cells["Column3"].Value = qty;
+                row.Cells["Column5"].Value = total;
+                row.Cells["Column6"].Value = tenKH;
+                row.Cells["Column7"].Value = tenNV;
+                MessageBox.Show($"Cập nhật thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // Add new row
+                dgvThongTinHoaDon.Rows.Add(txtMaThuoc.Text, txtTenThuoc.Text, txtDonViTinh.Text, qty, total, tenKH, tenNV);
+                MessageBox.Show($"Thêm sản phẩm vào hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            editingRowIndex = -1;
+            ClearInputFields();
+            UpdateTongTienHoaDon();
+        }
+
+        // Remove selected medicine from invoice
+        private void btnXoaHoaDon_Click(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.SelectedRows.Count > 0)
+            {
+                dgvThongTinHoaDon.Rows.RemoveAt(dgvThongTinHoaDon.SelectedRows[0].Index);
+                MessageBox.Show($"Xóa mặt hàng thành công.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UpdateTongTienHoaDon();
+            }
+            else
+            {
+                MessageBox.Show($"Vui lòng chọn mặt hàng để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        // Select row for editing
+        private void dgvThongTinHoaDon_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.SelectedRows.Count > 0)
+            {
+                var row = dgvThongTinHoaDon.SelectedRows[0];
+                txtMaThuoc.Text = row.Cells["Column1"].Value?.ToString();
+                txtTenThuoc.Text = row.Cells["Column2"].Value?.ToString();
+                txtDonViTinh.Text = row.Cells["Column4"].Value?.ToString();
+                txtSoLuong.Text = row.Cells["Column3"].Value?.ToString();
+                txtTongGia.Text = row.Cells["Column5"].Value?.ToString();
+                txtTenKH.Text = row.Cells["Column6"].Value?.ToString();
+                txtTenNV.Text = row.Cells["Column7"].Value?.ToString();
+                if (decimal.TryParse(row.Cells["Column5"].Value?.ToString(), out decimal donGia) && int.TryParse(row.Cells["Column3"].Value?.ToString(), out int soLuong) && soLuong > 0)
+                {
+                    txtDonGia.Text = (donGia / soLuong).ToString();
+                }
+                editingRowIndex = row.Index;
+            }
+            else
+            {
+                editingRowIndex = -1;
+            }
+        }
+
+        // Show/hide prescription name
+        private void cbBanTheoDon_CheckedChanged(object sender, EventArgs e)
+        {
+            txtTenDonThuoc.Visible = cbBanTheoDon.Checked;
+        }
+
+        // Calculate total invoice price
+        private void UpdateTongTienHoaDon()
+        {
+            decimal sum = 0;
+            foreach (DataGridViewRow row in dgvThongTinHoaDon.Rows)
+            {
+                if (row.Cells["Column5"].Value != null && decimal.TryParse(row.Cells["Column5"].Value.ToString(), out decimal val))
+                {
+                    sum += val;
+                }
+            }
+            txtTongTienHoaDon.Text = sum.ToString("N0");
+        }
+
+        // Clear input fields after add/edit
+        private void ClearInputFields()
+        {
+            txtMaThuoc.Text = "";
+            txtTenThuoc.Text = "";
+            txtDonViTinh.Text = "";
+            txtDonGia.Text = "";
+            txtSoLuong.Text = "";
+            txtTongGia.Text = "";
+        }
+
+        // Confirm and print invoice
+        private void btnThanhToan_Click(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.Rows.Count == 0)
+            {
+                MessageBox.Show($"Không có mặt hàng nào trong hóa đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                return;
+            }
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "PDF files (*.pdf)|*.pdf|Text files (*.txt)|*.txt";
+                sfd.Title = "Lưu hóa đơn";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = sfd.FileName;
+                    if (filePath.EndsWith(".pdf"))
+                    {
+                        ExportInvoiceToPdf(filePath);
+                    }
+                    else
+                    {
+                        ExportInvoiceToText(filePath);
+                    }
+                    MessageBox.Show($"Thanh toán và in hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+            }
+        }
+
+        private void ExportInvoiceToPdf(string filePath)
+        {
+            var document = new MigraDoc.DocumentObjectModel.Document();
+            var section = document.AddSection();
+
+            // Font hỗ trợ tiếng Việt
+            document.Styles["Normal"].Font.Name = "Arial";  // hoặc "Times New Roman"
+
+            // Tiêu đề
+            var title = section.AddParagraph("HÓA ĐƠN BÁN THUỐC");
+            title.Format.Font.Size = 16;
+            title.Format.Font.Bold = true;
+            title.Format.SpaceAfter = "1cm";
+            title.Format.Alignment = ParagraphAlignment.Center;
+
+            // Thông tin khách
+            section.AddParagraph($"Ngày: {DateTime.Now:dd/MM/yyyy HH:mm}");
+            section.AddParagraph($"Khách hàng: {txtTenKH.Text}");
+            section.AddParagraph($"Nhân viên: {txtTenNV.Text}");
+            if (cbBanTheoDon.Checked)
+                section.AddParagraph($"Đơn thuốc: {txtTenDonThuoc.Text}");
+
+            section.AddParagraph("");
+
+            // Bảng dữ liệu
+            var table = section.AddTable();
+            table.Borders.Width = 0.75;
+            table.AddColumn("3cm");
+            table.AddColumn("4cm");
+            table.AddColumn("3cm");
+            table.AddColumn("3cm");
+            table.AddColumn("4cm");
+
+            var header = table.AddRow();
+            header.Shading.Color = MigraDoc.DocumentObjectModel.Colors.LightGray;
+            header.Cells[0].AddParagraph("Mã Thuốc");
+            header.Cells[1].AddParagraph("Tên Thuốc");
+            header.Cells[2].AddParagraph("Đơn Vị");
+            header.Cells[3].AddParagraph("Số Lượng");
+            header.Cells[4].AddParagraph("Tổng Giá");
+
+            foreach (DataGridViewRow row in dgvThongTinHoaDon.Rows)
+            {
+                if (row.IsNewRow) continue;
+                var r = table.AddRow();
+                r.Cells[0].AddParagraph(row.Cells["Column1"].Value?.ToString());
+                r.Cells[1].AddParagraph(row.Cells["Column2"].Value?.ToString());
+                r.Cells[2].AddParagraph(row.Cells["Column4"].Value?.ToString());
+                r.Cells[3].AddParagraph(row.Cells["Column3"].Value?.ToString());
+                r.Cells[4].AddParagraph(row.Cells["Column5"].Value?.ToString());
+            }
+
+            section.AddParagraph("");
+            var total = section.AddParagraph($"Tổng tiền hóa đơn: {txtTongTienHoaDon.Text}");
+            total.Format.Font.Bold = true;
+
+            // Xuất file PDF
+            var pdfRenderer = new PdfDocumentRenderer(true);
+            pdfRenderer.Document = document;
+            pdfRenderer.RenderDocument();
+            pdfRenderer.PdfDocument.Save(filePath);
+        }
+
+
+        private void ExportInvoiceToText(string filePath)
+        {
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                sw.WriteLine("HÓA ĐƠN BÁN THUỐC");
+                sw.WriteLine($"Ngày: {DateTime.Now:dd/MM/yyyy HH:mm}");
+                sw.WriteLine($"Khách hàng: {txtTenKH.Text}");
+                sw.WriteLine($"Nhân viên: {txtTenNV.Text}");
+                if (cbBanTheoDon.Checked)
+                    sw.WriteLine($"Đơn thuốc: {txtTenDonThuoc.Text}");
+                sw.WriteLine();
+                sw.WriteLine("Mã Thuốc\tTên Thuốc\tĐơn Vị Tính\tSố Lượng\tTổng Giá");
+                foreach (DataGridViewRow row in dgvThongTinHoaDon.Rows)
+                {
+                    if (row.IsNewRow) continue;
+                    sw.WriteLine($"{row.Cells["Column1"].Value}\t{row.Cells["Column2"].Value}\t{row.Cells["Column4"].Value}\t{row.Cells["Column3"].Value}\t{row.Cells["Column5"].Value}");
+                }
+                sw.WriteLine($"Tổng tiền hóa đơn: {txtTongTienHoaDon.Text}");
+            }
+        }
+
+        // Medicine model
+        private class Medicine
+        {
+            public string MaThuoc { get; set; }
+            public string TenThuoc { get; set; }
+            public string DonViTinh { get; set; }
+            public decimal DonGia { get; set; }
+        }
+        
+    }
+}

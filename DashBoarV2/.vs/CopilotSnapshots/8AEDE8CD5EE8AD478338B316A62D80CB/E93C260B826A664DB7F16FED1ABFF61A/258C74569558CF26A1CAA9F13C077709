@@ -1,0 +1,92 @@
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+
+namespace DashBoarV2.USER
+{
+    public partial class LichSuBanThuoc : UserControl
+    {
+        private DataTable salesTable;
+        private string invoiceFolder = Path.Combine(Application.StartupPath, "Invoices"); // Folder for invoices
+
+        public LichSuBanThuoc()
+        {
+            InitializeComponent();
+        }
+
+        private void LichSuBanThuoc_Load(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+
+        private void LoadSalesHistory()
+        {
+            salesTable = new DataTable();
+            salesTable.Columns.Add("InvoiceID");
+            salesTable.Columns.Add("Date", typeof(DateTime));
+            salesTable.Columns.Add("CustomerName");
+            salesTable.Columns.Add("TotalAmount", typeof(decimal));
+            salesTable.Columns.Add("FilePath");
+
+            if (!Directory.Exists(invoiceFolder))
+                Directory.CreateDirectory(invoiceFolder);
+
+            // Example: Scan PDF files and parse metadata from filename: InvoiceID_Date_Customer_Total.pdf
+            foreach (var file in Directory.GetFiles(invoiceFolder, "*.pdf"))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                var parts = name.Split('_');
+                if (parts.Length >= 4)
+                {
+                    string invoiceId = parts[0];
+                    if (DateTime.TryParse(parts[1], out DateTime date) &&
+                        decimal.TryParse(parts[3], out decimal total))
+                    {
+                        string customer = parts[2];
+                        salesTable.Rows.Add(invoiceId, date, customer, total, file);
+                    }
+                }
+            }
+            dgvSalesHistory.DataSource = salesTable;
+            dgvSalesHistory.Columns["FilePath"].Visible = false;
+            dgvSalesHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void btnLoc_Click(object sender, EventArgs e)
+        {
+            if (salesTable == null) return;
+            DateTime selectedDate = dateTimePicker1.Value.Date;
+            DataView dv = new DataView(salesTable);
+            dv.RowFilter = $"Date = '#{selectedDate:MM/dd/yyyy}#'";
+            dgvSalesHistory.DataSource = dv;
+        }
+
+        private void btnXemChiTiet_Click(object sender, EventArgs e)
+        {
+            if (dgvSalesHistory.SelectedRows.Count > 0)
+            {
+                var row = dgvSalesHistory.SelectedRows[0];
+                string filePath = row.Cells["FilePath"].Value?.ToString();
+                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hóa đơn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một hóa đơn để xem chi tiết.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnCapNhat_Click(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+    }
+}

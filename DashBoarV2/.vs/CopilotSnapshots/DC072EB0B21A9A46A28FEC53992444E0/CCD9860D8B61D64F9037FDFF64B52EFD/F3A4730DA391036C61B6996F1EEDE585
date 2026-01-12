@@ -1,0 +1,74 @@
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace DashBoarV2.USER
+{
+    public partial class LichSuBanThuoc : UserControl
+    {
+        private string invoiceFolder = @"D:\HoaDon";
+        private DataTable invoiceTable = new DataTable();
+
+        private void LichSuBanThuoc_Load(object sender, EventArgs e)
+        {
+            invoiceTable.Columns.Add("FileName");
+            invoiceTable.Columns.Add("Date", typeof(DateTime));
+            invoiceTable.Columns.Add("Customer");
+            invoiceTable.Columns.Add("Path");
+            dgvSalesHistory.DataSource = invoiceTable;
+            LoadInvoices();
+        }
+
+        private void LoadInvoices()
+        {
+            invoiceTable.Rows.Clear();
+            if (!Directory.Exists(invoiceFolder)) return;
+            var files = Directory.GetFiles(invoiceFolder, "*.pdf");
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                DateTime date = File.GetCreationTime(file);
+                string customer = "";
+                // Try to extract customer from filename: e.g. HoaDon_KhachHang_Ten.pdf
+                var match = Regex.Match(fileName, @"HoaDon_(.*?)_");
+                if (match.Success)
+                    customer = match.Groups[1].Value;
+                invoiceTable.Rows.Add(fileName, date, customer, file);
+            }
+        }
+
+        private void btnLoc_Click(object sender, EventArgs e)
+        {
+            DateTime selectedDate = dateTimePicker1.Value.Date;
+            (dgvSalesHistory.DataSource as DataTable).DefaultView.RowFilter = $"Convert(Date, 'System.DateTime') = '{selectedDate:MM/dd/yyyy}'";
+        }
+
+        private void btnXemChiTiet_Click(object sender, EventArgs e)
+        {
+            if (dgvSalesHistory.SelectedRows.Count > 0)
+            {
+                string filePath = dgvSalesHistory.SelectedRows[0].Cells["Path"].Value.ToString();
+                if (File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hóa đơn!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn hóa đơn để xem chi tiết!");
+            }
+        }
+
+        private void dgvSalesHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Optional: handle cell click if needed
+        }
+    }
+}

@@ -1,0 +1,276 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.ComponentModel;        
+
+namespace DashBoarV2.USER
+{
+    public partial class BanThuoc : UserControl
+    {
+        private List<Medicine> medicines = new List<Medicine>
+        {
+            new Medicine { Code = "M001", Name = "Paracetamol", Unit = "Tablet", UnitPrice = 5000 },
+            new Medicine { Code = "M002", Name = "Aspirin", Unit = "Box", UnitPrice = 7000 },
+            new Medicine { Code = "M003", Name = "Amoxicillin", Unit = "Blister", UnitPrice = 12000 }
+        };
+        private List<InvoiceItem> invoiceItems = new List<InvoiceItem>();
+        private int editingRowIndex = -1;
+
+        public BanThuoc()
+        {
+            InitializeComponent();
+            txtTimKiemThuoc.TextChanged += txtTimKiemThuoc_TextChanged;
+            lstSuggestions.SelectedIndexChanged += lstSuggestions_SelectedIndexChanged;
+            txtSoLuong.TextChanged += txtSoLuong_TextChanged;
+            btnThemSuaHoaDon.Click += btnThemSuaHoaDon_Click;
+            btnXoaHoaDon.Click += btnXoaHoaDon_Click;
+            btnThanhToan.Click += btnThanhToan_Click;
+            dgvThongTinHoaDon.SelectionChanged += dgvThongTinHoaDon_SelectionChanged;
+            cbBanTheoDon.CheckedChanged += cbBanTheoDon_CheckedChanged;
+            SetupDataGridView();
+            UpdateGrandTotal();
+        }
+
+        private void txtTimKiemThuoc_TextChanged(object sender, EventArgs e)
+        {
+            string search = txtTimKiemThuoc.Text.Trim().ToLower();
+            lstSuggestions.Items.Clear();
+            foreach (var med in medicines.Where(m => m.Name.ToLower().Contains(search)))
+                lstSuggestions.Items.Add(med.Name);
+            lstSuggestions.Visible = lstSuggestions.Items.Count > 0;
+        }
+
+        private void lstSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSuggestions.SelectedItems.Count == 0) return;
+            var selectedItem = lstSuggestions.SelectedItems[0];
+            var med = medicines.FirstOrDefault(m => m.Name == selectedItem.Text);
+            if (med != null)
+            {
+                txtMaThuoc.Text = med.Code;
+                txtTenThuoc.Text = med.Name;
+                txtDonViTinh.Text = med.Unit;
+                txtDonGia.Text = med.UnitPrice.ToString();
+                txtSoLuong.Text = "1";
+                CalculateTotalPrice();
+            }
+            lstSuggestions.Visible = false;
+        }
+
+        private void txtSoLuong_TextChanged(object sender, EventArgs e)
+        {
+            CalculateTotalPrice();
+        }
+
+        private void CalculateTotalPrice()
+        {
+            if (int.TryParse(txtSoLuong.Text, out int qty) && decimal.TryParse(txtDonGia.Text, out decimal price))
+                txtTongGia.Text = (qty * price).ToString();
+            else
+                txtTongGia.Text = "";
+        }
+
+        private void btnThemSuaHoaDon_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(txtSoLuong.Text, out int qty) || qty <= 0)
+            {
+                MessageBox.Show("Số lượng phải là số nguyên dương.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtMaThuoc.Text) || string.IsNullOrWhiteSpace(txtTenThuoc.Text) || string.IsNullOrWhiteSpace(txtDonGia.Text))
+            {
+                MessageBox.Show("Vui lòng chọn thuốc.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var item = new InvoiceItem
+            {
+                Code = txtMaThuoc.Text,
+                Name = txtTenThuoc.Text,
+                Unit = txtDonViTinh.Text,
+                Quantity = qty,
+                UnitPrice = decimal.Parse(txtDonGia.Text)
+            };
+            if (editingRowIndex >= 0)
+            {
+                invoiceItems[editingRowIndex] = item;
+                editingRowIndex = -1;
+            }
+            else
+            {
+                invoiceItems.Add(item);
+            }
+            RefreshInvoiceGrid();
+            UpdateGrandTotal();
+            ClearForm();
+        }
+
+        private void btnXoaHoaDon_Click(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.SelectedRows.Count > 0)
+            {
+                int idx = dgvThongTinHoaDon.SelectedRows[0].Index;
+                if (idx >= 0 && idx < invoiceItems.Count)
+                {
+                    invoiceItems.RemoveAt(idx);
+                    RefreshInvoiceGrid();
+                    UpdateGrandTotal();
+                }
+            }
+        }
+
+        private void dgvThongTinHoaDon_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvThongTinHoaDon.SelectedRows.Count > 0)
+            {
+                int idx = dgvThongTinHoaDon.SelectedRows[0].Index;
+                if (idx >= 0 && idx < invoiceItems.Count)
+                {
+                    var item = invoiceItems[idx];
+                    txtMaThuoc.Text = item.Code;
+                    txtTenThuoc.Text = item.Name;
+                    txtDonViTinh.Text = item.Unit;
+                    txtDonGia.Text = item.UnitPrice.ToString();
+                    txtSoLuong.Text = item.Quantity.ToString();
+                    editingRowIndex = idx;
+                    CalculateTotalPrice();
+                }
+            }
+        }
+
+        private void cbBanTheoDon_CheckedChanged(object sender, EventArgs e)
+        {
+            txtTenDonThuoc.Visible = cbBanTheoDon.Checked;
+            if (cbBanTheoDon.Checked)
+            {
+                txtTenDonThuoc.Text = "Fever reducer pack";
+            }
+            else
+            {
+                txtTenDonThuoc.Text = "";
+            }
+        }
+
+        private void SetupDataGridView()
+        {
+            dgvThongTinHoaDon.Columns.Clear();
+            dgvThongTinHoaDon.AutoGenerateColumns = false;
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Mã Thuốc", DataPropertyName = "Code" });
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tên Thuốc", DataPropertyName = "Name" });
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Đơn Vị", DataPropertyName = "Unit" });
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Số Lượng", DataPropertyName = "Quantity" });
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Đơn Giá", DataPropertyName = "UnitPrice" });
+            dgvThongTinHoaDon.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Thành Tiền", DataPropertyName = "TotalPrice" });
+            dgvThongTinHoaDon.DataSource = new BindingList<InvoiceItem>(invoiceItems);
+        }
+
+        private void RefreshInvoiceGrid()
+        {
+            dgvThongTinHoaDon.DataSource = null;
+            dgvThongTinHoaDon.DataSource = new BindingList<InvoiceItem>(invoiceItems);
+        }
+
+        private void UpdateGrandTotal()
+        {
+            txtTongTienHoaDon.Text = invoiceItems.Sum(x => x.TotalPrice).ToString();
+        }
+
+        private void ClearForm()
+        {
+            txtMaThuoc.Text = "";
+            txtTenThuoc.Text = "";
+            txtDonViTinh.Text = "";
+            txtDonGia.Text = "";
+            txtSoLuong.Text = "";
+            txtTongGia.Text = "";
+            editingRowIndex = -1;
+        }
+
+        private void btnThanhToan_Click(object sender, EventArgs e)
+        {
+            using (var sfd = new SaveFileDialog { Filter = "PDF files (*.pdf)|*.pdf", FileName = $"Invoice_{DateTime.Now:yyyyMMdd_HHmmss}.pdf" })
+            {
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    ExportInvoiceToPdf(sfd.FileName);
+                    MessageBox.Show($"Invoice saved to: {sfd.FileName}", "Invoice Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void ExportInvoiceToPdf(string filePath)
+        {
+            Document doc = new Document(PageSize.A4);
+            try
+            {
+                PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+                doc.Open();
+                var fontTitle = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+                var fontHeader = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                var fontRow = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+
+                doc.Add(new Paragraph("Medicine Sales Invoice", fontTitle));
+                doc.Add(new Paragraph($"Date: {DateTime.Now:dd/MM/yyyy HH:mm:ss}", fontRow));
+                doc.Add(new Paragraph($"Customer Name: {txtTenKH.Text}", fontRow));
+                doc.Add(new Paragraph($"Employee Name: {txtTenNV.Text}", fontRow));
+                if (cbBanTheoDon.Checked)
+                    doc.Add(new Paragraph($"Prescription Name: {txtTenDonThuoc.Text}", fontRow));
+                doc.Add(new Paragraph(" "));
+
+                PdfPTable table = new PdfPTable(6) { WidthPercentage = 100 };
+                table.SetWidths(new float[] { 2, 4, 2, 2, 2, 2 });
+                table.AddCell(new PdfPCell(new Phrase("Mã Thuốc", fontHeader)));
+                table.AddCell(new PdfPCell(new Phrase("Tên Thuốc", fontHeader)));
+                table.AddCell(new PdfPCell(new Phrase("Đơn Vị", fontHeader)));
+                table.AddCell(new PdfPCell(new Phrase("Số Lượng", fontHeader)));
+                table.AddCell(new PdfPCell(new Phrase("Đơn Giá", fontHeader)));
+                table.AddCell(new PdfPCell(new Phrase("Thành Tiền", fontHeader)));
+
+                foreach (var item in invoiceItems)
+                {
+                    table.AddCell(new PdfPCell(new Phrase(item.Code, fontRow)));
+                    table.AddCell(new PdfPCell(new Phrase(item.Name, fontRow)));
+                    table.AddCell(new PdfPCell(new Phrase(item.Unit, fontRow)));
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), fontRow)));
+                    table.AddCell(new PdfPCell(new Phrase(item.UnitPrice.ToString(), fontRow)));
+                    table.AddCell(new PdfPCell(new Phrase(item.TotalPrice.ToString(), fontRow)));
+                }
+
+                doc.Add(table);
+                doc.Add(new Paragraph(" "));
+                doc.Add(new Paragraph($"Grand Total: {txtTongTienHoaDon.Text} VNĐ", fontHeader));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error generating PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                doc.Close();
+            }
+        }
+
+        // Data models
+        public class Medicine
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+            public string Unit { get; set; }
+            public decimal UnitPrice { get; set; }
+        }
+        public class InvoiceItem
+        {
+            public string Code { get; set; }
+            public string Name { get; set; }
+            public string Unit { get; set; }
+            public int Quantity { get; set; }
+            public decimal UnitPrice { get; set; }
+            public decimal TotalPrice => Quantity * UnitPrice;
+        }
+    }
+}

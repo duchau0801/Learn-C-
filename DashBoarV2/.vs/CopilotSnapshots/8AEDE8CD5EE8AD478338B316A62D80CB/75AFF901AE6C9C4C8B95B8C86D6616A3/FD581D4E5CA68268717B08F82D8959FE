@@ -1,0 +1,107 @@
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace DashBoarV2.USER
+{
+    public partial class LichSuBanThuoc : UserControl
+    {
+        private DataTable salesTable;
+        private string invoiceFolder = Path.Combine(Application.StartupPath, "Invoices"); // Folder for invoices
+
+        public LichSuBanThuoc()
+        {
+            InitializeComponent();
+            btnCapNhat.Click += btnCapNhat_Click;
+        }
+
+        private void LichSuBanThuoc_Load(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+
+        private void LoadSalesHistory()
+        {
+            salesTable = new DataTable();
+            salesTable.Columns.Add("InvoiceID");
+            salesTable.Columns.Add("Date", typeof(DateTime));
+            salesTable.Columns.Add("CustomerName");
+            salesTable.Columns.Add("TotalAmount", typeof(decimal));
+            salesTable.Columns.Add("FilePath");
+
+            if (!Directory.Exists(invoiceFolder))
+                Directory.CreateDirectory(invoiceFolder);
+
+            foreach (var file in Directory.GetFiles(invoiceFolder, "*.pdf"))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                // Try to extract metadata from filename: e.g. HoaDon1_20240802_123456_150000_KhachHangA.pdf
+                // Regex: HoaDon(\d+)(_\d{8}_\d{6})?(_\d+)?(_.+)?
+                var match = Regex.Match(name, @"HoaDon(?<id>\d+)(_(?<date>\d{8})_(?<time>\d{6}))?(_(?<total>\d+))?(_(?<customer>.+))?");
+                string invoiceId = name;
+                DateTime date = File.GetCreationTime(file);
+                decimal total = 0;
+                string customer = "";
+                if (match.Success)
+                {
+                    invoiceId = match.Groups["id"].Success ? $"HoaDon{match.Groups["id"].Value}" : name;
+                    if (match.Groups["date"].Success && match.Groups["time"].Success)
+                    {
+                        string dateStr = match.Groups["date"].Value + match.Groups["time"].Value;
+                        if (DateTime.TryParseExact(dateStr, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out DateTime dt))
+                            date = dt;
+                    }
+                    if (match.Groups["total"].Success)
+                        decimal.TryParse(match.Groups["total"].Value, out total);
+                    if (match.Groups["customer"].Success)
+                        customer = match.Groups["customer"].Value;
+                }
+                salesTable.Rows.Add(invoiceId, date, customer, total, file);
+            }
+            dgvSalesHistory.DataSource = salesTable;
+            if (dgvSalesHistory.Columns.Contains("FilePath"))
+                dgvSalesHistory.Columns["FilePath"].Visible = false;
+            dgvSalesHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void btnLoc_Click(object sender, EventArgs e)
+        {
+            if (salesTable == null) return;
+            DateTime selectedDate = dateTimePicker1.Value.Date;
+            DataView dv = new DataView(salesTable);
+            dv.RowFilter = $"Convert(Date, 'System.String') LIKE '{selectedDate:dd/MM/yyyy}%'";
+
+            // Refresh the DataGridView
+            dgvSalesHistory.DataSource = dv;
+        }
+
+        private void btnXemChiTiet_Click(object sender, EventArgs e)
+        {
+            if (dgvSalesHistory.SelectedRows.Count > 0)
+            {
+                var row = dgvSalesHistory.SelectedRows[0];
+                string filePath = row.Cells["FilePath"].Value?.ToString();
+                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hóa đơn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một hóa đơn để xem chi tiết.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnCapNhat_Click(object sender, EventArgs e)
+        {
+            LoadSalesHistory();
+        }
+    }
+}

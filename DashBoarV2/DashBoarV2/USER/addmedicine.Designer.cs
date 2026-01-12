@@ -1,0 +1,575 @@
+﻿namespace DashBoarV2.USER
+{
+    partial class addmedicine
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(addmedicine));
+            DevExpress.XtraCharts.XYDiagram xyDiagram1 = new DevExpress.XtraCharts.XYDiagram();
+            DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
+            panel1 = new System.Windows.Forms.Panel();
+            lblDanhSachThuoc = new System.Windows.Forms.Label();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            groudboxThongTin = new System.Windows.Forms.GroupBox();
+            pictureBox6 = new System.Windows.Forms.PictureBox();
+            pictureBox5 = new System.Windows.Forms.PictureBox();
+            pictureBox4 = new System.Windows.Forms.PictureBox();
+            pictureBox3 = new System.Windows.Forms.PictureBox();
+            pictureBox2 = new System.Windows.Forms.PictureBox();
+            TxtSoluong = new System.Windows.Forms.TextBox();
+            lblSoluong = new System.Windows.Forms.Label();
+            lblTenThuoc = new System.Windows.Forms.Label();
+            lblLoaiThuoc = new System.Windows.Forms.Label();
+            cmbDonViThuoc = new System.Windows.Forms.ComboBox();
+            lblDonViThuoc = new System.Windows.Forms.Label();
+            lblMaThuoc = new System.Windows.Forms.Label();
+            cmbLoaiThuoc = new System.Windows.Forms.ComboBox();
+            TxtMaThuoc = new System.Windows.Forms.TextBox();
+            TxtTenThuoc = new System.Windows.Forms.TextBox();
+            groupBoxChiTiet = new System.Windows.Forms.GroupBox();
+            pictureBox11 = new System.Windows.Forms.PictureBox();
+            pictureBox10 = new System.Windows.Forms.PictureBox();
+            pictureBox9 = new System.Windows.Forms.PictureBox();
+            pictureBox8 = new System.Windows.Forms.PictureBox();
+            pictureBox7 = new System.Windows.Forms.PictureBox();
+            textBox1 = new System.Windows.Forms.TextBox();
+            lblNhacungcap = new System.Windows.Forms.Label();
+            dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            lblGiaBan = new System.Windows.Forms.Label();
+            lblNgayNhap = new System.Windows.Forms.Label();
+            dateNSX = new System.Windows.Forms.DateTimePicker();
+            lblNgayHetHan = new System.Windows.Forms.Label();
+            lblGiaVon = new System.Windows.Forms.Label();
+            TxtGiaVon = new System.Windows.Forms.TextBox();
+            TxtGiaBan = new System.Windows.Forms.TextBox();
+            btnThem = new DevExpress.XtraEditors.SimpleButton();
+            chartThuoc = new DevExpress.XtraCharts.ChartControl();
+            btnCapNhat = new DevExpress.XtraEditors.SimpleButton();
+            panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            groudboxThongTin.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            groupBoxChiTiet.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox11).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox10).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox9).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)chartThuoc).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)xyDiagram1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)series1).BeginInit();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(lblDanhSachThuoc);
+            panel1.Controls.Add(pictureBox1);
+            panel1.Location = new System.Drawing.Point(37, 18);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(1586, 100);
+            panel1.TabIndex = 0;
+            // 
+            // lblDanhSachThuoc
+            // 
+            lblDanhSachThuoc.AutoSize = true;
+            lblDanhSachThuoc.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            lblDanhSachThuoc.Font = new System.Drawing.Font("Tahoma", 19.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblDanhSachThuoc.Location = new System.Drawing.Point(158, 29);
+            lblDanhSachThuoc.Name = "lblDanhSachThuoc";
+            lblDanhSachThuoc.Size = new System.Drawing.Size(227, 41);
+            lblDanhSachThuoc.TabIndex = 5;
+            lblDanhSachThuoc.Text = "Thêm Thuốc";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.add__1_;
+            pictureBox1.Location = new System.Drawing.Point(15, 2);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(111, 95);
+            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 4;
+            pictureBox1.TabStop = false;
+            // 
+            // groudboxThongTin
+            // 
+            groudboxThongTin.BackColor = System.Drawing.Color.LightSteelBlue;
+            groudboxThongTin.Controls.Add(pictureBox6);
+            groudboxThongTin.Controls.Add(pictureBox5);
+            groudboxThongTin.Controls.Add(pictureBox4);
+            groudboxThongTin.Controls.Add(pictureBox3);
+            groudboxThongTin.Controls.Add(pictureBox2);
+            groudboxThongTin.Controls.Add(TxtSoluong);
+            groudboxThongTin.Controls.Add(lblSoluong);
+            groudboxThongTin.Controls.Add(lblTenThuoc);
+            groudboxThongTin.Controls.Add(lblLoaiThuoc);
+            groudboxThongTin.Controls.Add(cmbDonViThuoc);
+            groudboxThongTin.Controls.Add(lblDonViThuoc);
+            groudboxThongTin.Controls.Add(lblMaThuoc);
+            groudboxThongTin.Controls.Add(cmbLoaiThuoc);
+            groudboxThongTin.Controls.Add(TxtMaThuoc);
+            groudboxThongTin.Controls.Add(TxtTenThuoc);
+            groudboxThongTin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            groudboxThongTin.Location = new System.Drawing.Point(100, 124);
+            groudboxThongTin.Name = "groudboxThongTin";
+            groudboxThongTin.Size = new System.Drawing.Size(647, 348);
+            groudboxThongTin.TabIndex = 12;
+            groudboxThongTin.TabStop = false;
+            groudboxThongTin.Text = "Thông Tin";
+            groudboxThongTin.Enter += groudboxThongTin_Enter;
+            // 
+            // pictureBox6
+            // 
+            pictureBox6.Image = Properties.Resources.warning;
+            pictureBox6.Location = new System.Drawing.Point(171, 297);
+            pictureBox6.Name = "pictureBox6";
+            pictureBox6.Size = new System.Drawing.Size(24, 41);
+            pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox6.TabIndex = 16;
+            pictureBox6.TabStop = false;
+            // 
+            // pictureBox5
+            // 
+            pictureBox5.Image = Properties.Resources.warning;
+            pictureBox5.Location = new System.Drawing.Point(154, 226);
+            pictureBox5.Name = "pictureBox5";
+            pictureBox5.Size = new System.Drawing.Size(24, 41);
+            pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox5.TabIndex = 15;
+            pictureBox5.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.Image = Properties.Resources.warning;
+            pictureBox4.Location = new System.Drawing.Point(131, 153);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new System.Drawing.Size(24, 41);
+            pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox4.TabIndex = 14;
+            pictureBox4.TabStop = false;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.Image = Properties.Resources.warning;
+            pictureBox3.Location = new System.Drawing.Point(122, 93);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new System.Drawing.Size(24, 41);
+            pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox3.TabIndex = 13;
+            pictureBox3.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = Properties.Resources.warning;
+            pictureBox2.Location = new System.Drawing.Point(122, 33);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new System.Drawing.Size(24, 41);
+            pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 6;
+            pictureBox2.TabStop = false;
+            // 
+            // TxtSoluong
+            // 
+            TxtSoluong.Location = new System.Drawing.Point(227, 297);
+            TxtSoluong.Name = "TxtSoluong";
+            TxtSoluong.Size = new System.Drawing.Size(411, 34);
+            TxtSoluong.TabIndex = 12;
+            // 
+            // lblSoluong
+            // 
+            lblSoluong.AutoSize = true;
+            lblSoluong.BackColor = System.Drawing.Color.Snow;
+            lblSoluong.Location = new System.Drawing.Point(6, 300);
+            lblSoluong.Name = "lblSoluong";
+            lblSoluong.Size = new System.Drawing.Size(149, 28);
+            lblSoluong.TabIndex = 11;
+            lblSoluong.Text = "Số Lượng Nhập";
+            // 
+            // lblTenThuoc
+            // 
+            lblTenThuoc.AutoSize = true;
+            lblTenThuoc.BackColor = System.Drawing.Color.Snow;
+            lblTenThuoc.Location = new System.Drawing.Point(6, 99);
+            lblTenThuoc.Name = "lblTenThuoc";
+            lblTenThuoc.Size = new System.Drawing.Size(99, 28);
+            lblTenThuoc.TabIndex = 5;
+            lblTenThuoc.Text = "Tên Thuốc";
+            // 
+            // lblLoaiThuoc
+            // 
+            lblLoaiThuoc.AutoSize = true;
+            lblLoaiThuoc.BackColor = System.Drawing.Color.Snow;
+            lblLoaiThuoc.Location = new System.Drawing.Point(6, 161);
+            lblLoaiThuoc.Name = "lblLoaiThuoc";
+            lblLoaiThuoc.Size = new System.Drawing.Size(106, 28);
+            lblLoaiThuoc.TabIndex = 7;
+            lblLoaiThuoc.Text = "Loại Thuốc";
+            // 
+            // cmbDonViThuoc
+            // 
+            cmbDonViThuoc.FormattingEnabled = true;
+            cmbDonViThuoc.Items.AddRange(new object[] { "hộp", "vĩ", "chai/lọ", "thùng" });
+            cmbDonViThuoc.Location = new System.Drawing.Point(227, 226);
+            cmbDonViThuoc.Name = "cmbDonViThuoc";
+            cmbDonViThuoc.Size = new System.Drawing.Size(411, 36);
+            cmbDonViThuoc.TabIndex = 10;
+            // 
+            // lblDonViThuoc
+            // 
+            lblDonViThuoc.AutoSize = true;
+            lblDonViThuoc.BackColor = System.Drawing.Color.Snow;
+            lblDonViThuoc.Location = new System.Drawing.Point(6, 234);
+            lblDonViThuoc.Name = "lblDonViThuoc";
+            lblDonViThuoc.Size = new System.Drawing.Size(129, 28);
+            lblDonViThuoc.TabIndex = 9;
+            lblDonViThuoc.Text = "Đơn Vị Thuốc";
+            // 
+            // lblMaThuoc
+            // 
+            lblMaThuoc.AutoSize = true;
+            lblMaThuoc.BackColor = System.Drawing.Color.Snow;
+            lblMaThuoc.Location = new System.Drawing.Point(7, 37);
+            lblMaThuoc.Name = "lblMaThuoc";
+            lblMaThuoc.Size = new System.Drawing.Size(98, 28);
+            lblMaThuoc.TabIndex = 1;
+            lblMaThuoc.Text = "Mã Thuốc";
+            // 
+            // cmbLoaiThuoc
+            // 
+            cmbLoaiThuoc.FormattingEnabled = true;
+            cmbLoaiThuoc.Items.AddRange(new object[] { "Thuốc Cảm", "Thuốc Tim Mạch", "Dụng Cụ Y tế" });
+            cmbLoaiThuoc.Location = new System.Drawing.Point(227, 158);
+            cmbLoaiThuoc.Name = "cmbLoaiThuoc";
+            cmbLoaiThuoc.Size = new System.Drawing.Size(411, 36);
+            cmbLoaiThuoc.TabIndex = 8;
+            // 
+            // TxtMaThuoc
+            // 
+            TxtMaThuoc.Location = new System.Drawing.Point(227, 31);
+            TxtMaThuoc.Name = "TxtMaThuoc";
+            TxtMaThuoc.Size = new System.Drawing.Size(411, 34);
+            TxtMaThuoc.TabIndex = 3;
+            TxtMaThuoc.TextChanged += TxtMaThuoc_TextChanged;
+            // 
+            // TxtTenThuoc
+            // 
+            TxtTenThuoc.Location = new System.Drawing.Point(227, 93);
+            TxtTenThuoc.Name = "TxtTenThuoc";
+            TxtTenThuoc.Size = new System.Drawing.Size(411, 34);
+            TxtTenThuoc.TabIndex = 6;
+            // 
+            // groupBoxChiTiet
+            // 
+            groupBoxChiTiet.BackColor = System.Drawing.Color.LightSteelBlue;
+            groupBoxChiTiet.Controls.Add(pictureBox11);
+            groupBoxChiTiet.Controls.Add(pictureBox10);
+            groupBoxChiTiet.Controls.Add(pictureBox9);
+            groupBoxChiTiet.Controls.Add(pictureBox8);
+            groupBoxChiTiet.Controls.Add(pictureBox7);
+            groupBoxChiTiet.Controls.Add(textBox1);
+            groupBoxChiTiet.Controls.Add(lblNhacungcap);
+            groupBoxChiTiet.Controls.Add(dateTimePicker1);
+            groupBoxChiTiet.Controls.Add(lblGiaBan);
+            groupBoxChiTiet.Controls.Add(lblNgayNhap);
+            groupBoxChiTiet.Controls.Add(dateNSX);
+            groupBoxChiTiet.Controls.Add(lblNgayHetHan);
+            groupBoxChiTiet.Controls.Add(lblGiaVon);
+            groupBoxChiTiet.Controls.Add(TxtGiaVon);
+            groupBoxChiTiet.Controls.Add(TxtGiaBan);
+            groupBoxChiTiet.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            groupBoxChiTiet.Location = new System.Drawing.Point(782, 124);
+            groupBoxChiTiet.Name = "groupBoxChiTiet";
+            groupBoxChiTiet.Size = new System.Drawing.Size(644, 348);
+            groupBoxChiTiet.TabIndex = 13;
+            groupBoxChiTiet.TabStop = false;
+            groupBoxChiTiet.Text = "Chi Tiết";
+            groupBoxChiTiet.Enter += groupBoxChiTiet_Enter;
+            // 
+            // pictureBox11
+            // 
+            pictureBox11.Image = Properties.Resources.warning;
+            pictureBox11.Location = new System.Drawing.Point(164, 294);
+            pictureBox11.Name = "pictureBox11";
+            pictureBox11.Size = new System.Drawing.Size(24, 41);
+            pictureBox11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox11.TabIndex = 17;
+            pictureBox11.TabStop = false;
+            // 
+            // pictureBox10
+            // 
+            pictureBox10.Image = Properties.Resources.warning;
+            pictureBox10.Location = new System.Drawing.Point(164, 221);
+            pictureBox10.Name = "pictureBox10";
+            pictureBox10.Size = new System.Drawing.Size(24, 41);
+            pictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox10.TabIndex = 16;
+            pictureBox10.TabStop = false;
+            // 
+            // pictureBox9
+            // 
+            pictureBox9.Image = Properties.Resources.warning;
+            pictureBox9.Location = new System.Drawing.Point(141, 153);
+            pictureBox9.Name = "pictureBox9";
+            pictureBox9.Size = new System.Drawing.Size(24, 41);
+            pictureBox9.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox9.TabIndex = 15;
+            pictureBox9.TabStop = false;
+            // 
+            // pictureBox8
+            // 
+            pictureBox8.Image = Properties.Resources.warning;
+            pictureBox8.Location = new System.Drawing.Point(113, 93);
+            pictureBox8.Name = "pictureBox8";
+            pictureBox8.Size = new System.Drawing.Size(24, 41);
+            pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox8.TabIndex = 14;
+            pictureBox8.TabStop = false;
+            // 
+            // pictureBox7
+            // 
+            pictureBox7.Image = Properties.Resources.warning;
+            pictureBox7.Location = new System.Drawing.Point(113, 31);
+            pictureBox7.Name = "pictureBox7";
+            pictureBox7.Size = new System.Drawing.Size(24, 41);
+            pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            pictureBox7.TabIndex = 13;
+            pictureBox7.TabStop = false;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new System.Drawing.Point(244, 294);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(383, 34);
+            textBox1.TabIndex = 12;
+            textBox1.TextChanged += textBox1_TextChanged;
+            // 
+            // lblNhacungcap
+            // 
+            lblNhacungcap.AutoSize = true;
+            lblNhacungcap.BackColor = System.Drawing.Color.Snow;
+            lblNhacungcap.Location = new System.Drawing.Point(12, 300);
+            lblNhacungcap.Name = "lblNhacungcap";
+            lblNhacungcap.Size = new System.Drawing.Size(138, 28);
+            lblNhacungcap.TabIndex = 11;
+            lblNhacungcap.Text = "Nhà Cung Cấp";
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.CalendarMonthBackground = System.Drawing.SystemColors.InactiveBorder;
+            dateTimePicker1.Location = new System.Drawing.Point(244, 224);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new System.Drawing.Size(383, 34);
+            dateTimePicker1.TabIndex = 10;
+            // 
+            // lblGiaBan
+            // 
+            lblGiaBan.AutoSize = true;
+            lblGiaBan.BackColor = System.Drawing.Color.Snow;
+            lblGiaBan.Location = new System.Drawing.Point(12, 96);
+            lblGiaBan.Name = "lblGiaBan";
+            lblGiaBan.Size = new System.Drawing.Size(78, 28);
+            lblGiaBan.TabIndex = 5;
+            lblGiaBan.Text = "Giá Bán";
+            // 
+            // lblNgayNhap
+            // 
+            lblNgayNhap.AutoSize = true;
+            lblNgayNhap.BackColor = System.Drawing.Color.Snow;
+            lblNgayNhap.Location = new System.Drawing.Point(12, 161);
+            lblNgayNhap.Name = "lblNgayNhap";
+            lblNgayNhap.Size = new System.Drawing.Size(112, 28);
+            lblNgayNhap.TabIndex = 7;
+            lblNgayNhap.Text = "Ngày Nhập";
+            // 
+            // dateNSX
+            // 
+            dateNSX.CalendarMonthBackground = System.Drawing.SystemColors.InactiveBorder;
+            dateNSX.Location = new System.Drawing.Point(244, 153);
+            dateNSX.Name = "dateNSX";
+            dateNSX.Size = new System.Drawing.Size(383, 34);
+            dateNSX.TabIndex = 2;
+            // 
+            // lblNgayHetHan
+            // 
+            lblNgayHetHan.AutoSize = true;
+            lblNgayHetHan.BackColor = System.Drawing.Color.Snow;
+            lblNgayHetHan.Location = new System.Drawing.Point(12, 229);
+            lblNgayHetHan.Name = "lblNgayHetHan";
+            lblNgayHetHan.Size = new System.Drawing.Size(135, 28);
+            lblNgayHetHan.TabIndex = 9;
+            lblNgayHetHan.Text = "Ngày Hết Hạn";
+            // 
+            // lblGiaVon
+            // 
+            lblGiaVon.AutoSize = true;
+            lblGiaVon.BackColor = System.Drawing.Color.Snow;
+            lblGiaVon.Location = new System.Drawing.Point(12, 37);
+            lblGiaVon.Name = "lblGiaVon";
+            lblGiaVon.Size = new System.Drawing.Size(85, 28);
+            lblGiaVon.TabIndex = 1;
+            lblGiaVon.Text = "Giá Mua";
+            // 
+            // TxtGiaVon
+            // 
+            TxtGiaVon.Location = new System.Drawing.Point(244, 31);
+            TxtGiaVon.Name = "TxtGiaVon";
+            TxtGiaVon.Size = new System.Drawing.Size(383, 34);
+            TxtGiaVon.TabIndex = 3;
+            // 
+            // TxtGiaBan
+            // 
+            TxtGiaBan.Location = new System.Drawing.Point(244, 90);
+            TxtGiaBan.Name = "TxtGiaBan";
+            TxtGiaBan.Size = new System.Drawing.Size(383, 34);
+            TxtGiaBan.TabIndex = 6;
+            // 
+            // btnThem
+            // 
+            btnThem.Appearance.BackColor = System.Drawing.Color.LightGray;
+            btnThem.Appearance.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            btnThem.Appearance.Options.UseBackColor = true;
+            btnThem.Appearance.Options.UseFont = true;
+            btnThem.ImageOptions.Image = (System.Drawing.Image)resources.GetObject("btnThem.ImageOptions.Image");
+            btnThem.Location = new System.Drawing.Point(1461, 376);
+            btnThem.Name = "btnThem";
+            btnThem.Size = new System.Drawing.Size(127, 36);
+            btnThem.TabIndex = 14;
+            btnThem.Text = "Thêm";
+            btnThem.Click += btnThem_Click_1;
+            // 
+            // chartThuoc
+            // 
+            xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
+            chartThuoc.Diagram = xyDiagram1;
+            chartThuoc.Location = new System.Drawing.Point(100, 490);
+            chartThuoc.Name = "chartThuoc";
+            series1.Name = "Series 1";
+            series1.SeriesID = 0;
+            chartThuoc.SeriesSerializable = new DevExpress.XtraCharts.Series[]
+    {
+    series1
+    };
+            chartThuoc.Size = new System.Drawing.Size(1287, 360);
+            chartThuoc.TabIndex = 15;
+            chartThuoc.Click += chartThuoc_Click;
+            // 
+            // btnCapNhat
+            // 
+            btnCapNhat.Appearance.BackColor = System.Drawing.Color.Maroon;
+            btnCapNhat.Appearance.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            btnCapNhat.Appearance.Options.UseBackColor = true;
+            btnCapNhat.Appearance.Options.UseFont = true;
+            btnCapNhat.ImageOptions.Image = (System.Drawing.Image)resources.GetObject("btnCapNhat.ImageOptions.Image");
+            btnCapNhat.Location = new System.Drawing.Point(1461, 436);
+            btnCapNhat.Name = "btnCapNhat";
+            btnCapNhat.Size = new System.Drawing.Size(127, 36);
+            btnCapNhat.TabIndex = 17;
+            btnCapNhat.Text = "Cập Nhật";
+            btnCapNhat.Click += btnCapNhat_Click_1;
+            // 
+            // addmedicine
+            // 
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(btnCapNhat);
+            Controls.Add(chartThuoc);
+            Controls.Add(btnThem);
+            Controls.Add(groupBoxChiTiet);
+            Controls.Add(groudboxThongTin);
+            Controls.Add(panel1);
+            Name = "addmedicine";
+            Size = new System.Drawing.Size(1673, 870);
+            Load += addmedicine_Load_1;
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            groudboxThongTin.ResumeLayout(false);
+            groudboxThongTin.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            groupBoxChiTiet.ResumeLayout(false);
+            groupBoxChiTiet.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox11).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox10).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox9).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox7).EndInit();
+            ((System.ComponentModel.ISupportInitialize)xyDiagram1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)series1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)chartThuoc).EndInit();
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lblDanhSachThuoc;
+        public System.Windows.Forms.GroupBox groudboxThongTin;
+        public System.Windows.Forms.TextBox TxtSoluong;
+        private System.Windows.Forms.Label lblSoluong;
+        private System.Windows.Forms.Label lblTenThuoc;
+        private System.Windows.Forms.Label lblLoaiThuoc;
+        public System.Windows.Forms.ComboBox cmbDonViThuoc;
+        private System.Windows.Forms.Label lblDonViThuoc;
+        private System.Windows.Forms.Label lblMaThuoc;
+        public System.Windows.Forms.ComboBox cmbLoaiThuoc;
+        public System.Windows.Forms.TextBox TxtMaThuoc;
+        public System.Windows.Forms.TextBox TxtTenThuoc;
+        public System.Windows.Forms.GroupBox groupBoxChiTiet;
+        public System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.Label lblGiaBan;
+        private System.Windows.Forms.Label lblNgayNhap;
+        public System.Windows.Forms.DateTimePicker dateNSX;
+        private System.Windows.Forms.Label lblNgayHetHan;
+        private System.Windows.Forms.Label lblGiaVon;
+        public System.Windows.Forms.TextBox TxtGiaVon;
+        public System.Windows.Forms.TextBox TxtGiaBan;
+        private System.Windows.Forms.PictureBox pictureBox6;
+        private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Label lblNhacungcap;
+        private System.Windows.Forms.PictureBox pictureBox11;
+        private System.Windows.Forms.PictureBox pictureBox10;
+        private System.Windows.Forms.PictureBox pictureBox9;
+        private System.Windows.Forms.PictureBox pictureBox8;
+        private System.Windows.Forms.PictureBox pictureBox7;
+        public System.Windows.Forms.TextBox textBox1;
+        private DevExpress.XtraEditors.SimpleButton btnThem;
+        private DevExpress.XtraCharts.ChartControl chartThuoc;
+        public DevExpress.XtraEditors.SimpleButton btnCapNhat;
+    }
+}

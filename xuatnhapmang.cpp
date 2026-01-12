@@ -123,12 +123,14 @@ int tongHH(int a[], int n){
 	}
 	return tong;
 }
-/*/liet ke so chinh phuong trong mang
+//liet ke so chinh phuong trong mang
 bool KTCP(int n){
-	int i= sqrt(n);
-	if(i*i==n){
+	int i= 1;
+	while(i*i<n)
+	    i++; 
+	if(i*i==n)
 		return true; 
-	}else 
+	else 
 	return false; 
 }
 void  lietKeSCP(int a[], int n){
@@ -136,10 +138,11 @@ void  lietKeSCP(int a[], int n){
 	for(int i=0; i<n; i++){
 		if(KTHH(a[i])== true)
 		printf("%d\t",a[i]);
+    }
 }
-*/
-//
-int main(){
+
+int main()
+{
 	int n, a[MAX];
 	nhapN(n);
 	sinhMang(a,n);
@@ -153,7 +156,7 @@ int main(){
 	lietKeSHH(a,n);
 	printf("\nCo %d SHH trong mang",demHH(a,n));
 	printf("\nTong HH=%d",tongHH(a,n));
-	//lietKeSCP(a,n);
+	lietKeSCP(a,n);
 	return 0;
 }
 

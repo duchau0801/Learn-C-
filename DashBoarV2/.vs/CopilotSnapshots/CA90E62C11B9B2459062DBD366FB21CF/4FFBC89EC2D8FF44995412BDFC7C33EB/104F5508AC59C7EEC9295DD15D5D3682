@@ -1,0 +1,168 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace DashBoarV2.USER
+{
+    public partial class addmedicine : UserControl
+    {
+        private string connectionString = "Server=DESKTOP-A444F8V\\SQLEXPRESS;Database=QuanLiNhaThuoc;Integrated Security=True;"; // Sửa lại thông tin kết nối phù hợp
+
+        private void LoadLoaiThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT LoaiThuoc FROM Thuoc WHERE LoaiThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbLoaiThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbLoaiThuoc.Items.Add(reader["LoaiThuoc"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbLoaiThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbLoaiThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadDonViThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT DonViTinh FROM Thuoc WHERE DonViTinh IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    cmbDonViThuoc.Items.Clear();
+                    while (reader.Read())
+                    {
+                        cmbDonViThuoc.Items.Add(reader["DonViTinh"].ToString());
+                    }
+                    reader.Close();
+                    // Kích hoạt AutoComplete cho combobox
+                    cmbDonViThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbDonViThuoc.AutoCompleteSource = AutoCompleteSource.ListItems;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadTenThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT TenThuoc FROM Thuoc WHERE TenThuoc IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    AutoCompleteStringCollection tenThuocCollection = new AutoCompleteStringCollection();
+                    while (reader.Read())
+                    {
+                        tenThuocCollection.Add(reader["TenThuoc"].ToString());
+                    }
+                    reader.Close();
+                    TxtTenThuoc.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    TxtTenThuoc.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    TxtTenThuoc.AutoCompleteCustomSource = tenThuocCollection;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadNhaCungCap()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT DISTINCT TenNCC FROM NhaCungCap WHERE TenNCC IS NOT NULL";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    AutoCompleteStringCollection nccCollection = new AutoCompleteStringCollection();
+                    while (reader.Read())
+                    {
+                        nccCollection.Add(reader["TenNCC"].ToString());
+                    }
+                    reader.Close();
+                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    textBox1.AutoCompleteCustomSource = nccCollection;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+        private void addmedicine_Load(object sender, EventArgs e)
+        {
+            LoadLoaiThuoc();
+            LoadDonViThuoc();
+            LoadTenThuoc();
+            LoadNhaCungCap();
+        }
+
+        private void TxtTenThuoc_TextChanged(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT MaThuoc FROM Thuoc WHERE TenThuoc = @TenThuoc";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@TenThuoc", TxtTenThuoc.Text.Trim());
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        TxtMaThuoc.Text = result.ToString();
+                    }
+                    else
+                    {
+                        TxtMaThuoc.Text = "";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Không cần báo lỗi liên tục khi người dùng nhập
+                }
+            }
+        }
+
+        public addmedicine()
+        {
+            InitializeComponent();
+            this.Load += addmedicine_Load;
+            this.TxtTenThuoc.TextChanged += TxtTenThuoc_TextChanged;
+        }
+    }
+}
